@@ -1,7 +1,200 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import Logo from "@/public/assets/images/logo-black.png";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { credentialsSchema } from "@/lib/zodSchema";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import ButtonLoading from "@/components/application/ButtonLoading";
+import z from "zod";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa6";
+import Link from "next/link";
+import { WEBSITE_REGISTER } from "@/routes/WebsiteRoutes";
+import { showToast } from "@/lib/showToast";
+import axios from "axios";
+import OTPVerification from "@/components/application/OTPVerification";
 
 const LoginPage = () => {
-  return <div>LoginPage</div>;
+  const [loading, setLoading] = useState(false);
+  const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
+  const [isTypePassword, setIsTypePassword] = useState(true);
+  const [otpEmail, setOtpEmail] = useState();
+  const formSchema = credentialsSchema
+    .pick({
+      email: true,
+    })
+    .extend({
+      password: z.string().min("3", "password field is required"),
+    });
+  // 1. Define your form.
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const handleLoginSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const { data: loginResponse } = await axios.post(
+        "/api/auth/login",
+        values
+      );
+      if (!loginResponse.success) {
+        throw new Error(loginResponse.message);
+      }
+
+      setOtpEmail(values.email);
+
+      form.reset();
+      showToast("success", loginResponse.message);
+    } catch (error) {
+      showToast("error", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOtpVerification = async (values) => {
+    try {
+      setOtpVerificationLoading(true);
+      const { data: loginResponse } = await axios.post(
+        "/api/auth/verify-otp",
+        values
+      );
+      if (!loginResponse.success) {
+        throw new Error(loginResponse.message);
+      }
+
+      setOtpEmail("");
+
+      showToast("success", loginResponse.message);
+    } catch (error) {
+      showToast("error", error.message);
+    } finally {
+      setOtpVerificationLoading(false);
+    }
+  };
+
+  return (
+    <Card className="w-[400px]">
+      <CardContent>
+        <div className="flex justify-center">
+          <Image src={Logo} alt="logo" className="max-w-[150px]" />
+        </div>
+        {!otpEmail ? (
+          <>
+            <div className="text-center">
+              <h1 className="text-2xl font-semibold">Login Into Account</h1>
+              <p>Login into your account by filling out the from bellow</p>
+            </div>
+            <div className="mt-5">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleLoginSubmit)}>
+                  <div className="mb-5">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="example@gmail.com"
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mb-5">
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem className="relative">
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type={isTypePassword ? "password" : "text"}
+                              placeholder="************"
+                              {...field}
+                            />
+                          </FormControl>
+                          <button
+                            type="button"
+                            className="absolute top-1/2 right-2 cursor-pointer"
+                            onClick={() => setIsTypePassword(!isTypePassword)}
+                          >
+                            {isTypePassword ? <FaRegEyeSlash /> : <FaRegEye />}
+                          </button>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <ButtonLoading
+                      type="submit"
+                      text="login"
+                      className="w-full cursor-pointer"
+                      loading={loading}
+                    />
+                  </div>
+                  <div className="text-center">
+                    <div className="flex justify-center items-center gap-1">
+                      <p>Don't have a account</p>
+                      <Link
+                        href={WEBSITE_REGISTER}
+                        className="text-primary underline"
+                      >
+                        create account
+                      </Link>
+                    </div>
+                    <div className="mt-3">
+                      <Link href="" className="text-primary underline">
+                        Forget password
+                      </Link>
+                    </div>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          </>
+        ) : (
+          <>
+            <OTPVerification
+              email={otpEmail}
+              onSubmit={handleOtpVerification}
+              loading={otpVerificationLoading}
+            />
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
 };
 
 export default LoginPage;
