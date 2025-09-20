@@ -20,86 +20,71 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ButtonLoading from "@/components/application/ButtonLoading";
-import z from "zod";
-import { FaRegEyeSlash } from "react-icons/fa";
-import { FaRegEye } from "react-icons/fa6";
+
 import Link from "next/link";
-import {
-  WEBSITE_REGISTER,
-  WEBSITE_RESETPASSWORD,
-} from "@/routes/WebsiteRoutes";
+import { WEBSITE_LOGIN } from "@/routes/WebsiteRoutes";
 import { showToast } from "@/lib/showToast";
 import axios from "axios";
 import OTPVerification from "@/components/application/OTPVerification";
-import { useDispatch } from "react-redux";
-import { login } from "@/store/slices/authSlice";
+import UpdatePassword from "@/components/application/UpdatePassword";
+import { email } from "zod";
 
-const LoginPage = () => {
-  const [loading, setLoading] = useState(false);
+const ResetPassword = () => {
+  const [emailVerificationLoading, setEmailVerificationLoading] =
+    useState(false);
   const [otpVerificationLoading, setOtpVerificationLoading] = useState(false);
-  const [isTypePassword, setIsTypePassword] = useState(true);
   const [otpEmail, setOtpEmail] = useState();
-  const dispatch = useDispatch();
-  const formSchema = credentialsSchema
-    .pick({
-      email: true,
-    })
-    .extend({
-      password: z.string().min("3", "password field is required"),
-    });
-  // 1. Define your form.
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const fromSchema = credentialsSchema.pick({
+    email: true,
+  });
+
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(fromSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const handleLoginSubmit = async (values) => {
+  const handleEmailVerification = async (values) => {
     try {
-      setLoading(true);
-      const { data: loginResponse } = await axios.post(
-        "/api/auth/login",
+      setEmailVerificationLoading(true);
+      const { data: sendOtpResponse } = await axios.post(
+        "/api/auth/reset-password/send-otp",
         values
       );
-      if (!loginResponse.success) {
-        throw new Error(loginResponse.message);
+      if (!sendOtpResponse.success) {
+        throw new Error(sendOtpResponse.message);
       }
 
       setOtpEmail(values.email);
 
-      form.reset();
-      showToast("success", loginResponse.message);
+      showToast("success", sendOtpResponse.message);
     } catch (error) {
       showToast("error", error.message);
     } finally {
-      setLoading(false);
+      setEmailVerificationLoading(false);
     }
   };
-
   const handleOtpVerification = async (values) => {
     try {
       setOtpVerificationLoading(true);
       const { data: otpResponse } = await axios.post(
-        "/api/auth/verify-otp",
+        "/api/auth/reset-password/verify-otp",
         values
       );
       if (!otpResponse.success) {
         throw new Error(otpResponse.message);
       }
 
-      setOtpEmail("");
-
       showToast("success", otpResponse.message);
-      dispatch(login(otpResponse.data));
+      setIsOtpVerified(true);
     } catch (error) {
       showToast("error", error.message);
     } finally {
       setOtpVerificationLoading(false);
     }
   };
-
   return (
     <Card className="w-[400px]">
       <CardContent>
@@ -109,12 +94,12 @@ const LoginPage = () => {
         {!otpEmail ? (
           <>
             <div className="text-center">
-              <h1 className="text-2xl font-semibold">Login Into Account</h1>
-              <p>Login into your account by filling out the from bellow</p>
+              <h1 className="text-2xl font-semibold">Reset Password</h1>
+              <p>Enter your email for password reset</p>
             </div>
             <div className="mt-5">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleLoginSubmit)}>
+                <form onSubmit={form.handleSubmit(handleEmailVerification)}>
                   <div className="mb-5">
                     <FormField
                       control={form.control}
@@ -135,57 +120,22 @@ const LoginPage = () => {
                       )}
                     />
                   </div>
-                  <div className="mb-5">
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem className="relative">
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type={isTypePassword ? "password" : "text"}
-                              placeholder="************"
-                              {...field}
-                            />
-                          </FormControl>
-                          <button
-                            type="button"
-                            className="absolute top-1/2 right-2 cursor-pointer"
-                            onClick={() => setIsTypePassword(!isTypePassword)}
-                          >
-                            {isTypePassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                          </button>
 
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                   <div>
                     <ButtonLoading
                       type="submit"
-                      text="login"
+                      text="Send OTP"
                       className="w-full cursor-pointer"
-                      loading={loading}
+                      loading={emailVerificationLoading}
                     />
                   </div>
                   <div className="text-center">
                     <div className="flex justify-center items-center gap-1">
-                      <p>Don't have a account</p>
                       <Link
-                        href={WEBSITE_REGISTER}
+                        href={WEBSITE_LOGIN}
                         className="text-primary underline"
                       >
-                        create account
-                      </Link>
-                    </div>
-                    <div className="mt-3">
-                      <Link
-                        href={WEBSITE_RESETPASSWORD}
-                        className="text-primary underline"
-                      >
-                        Forget password
+                        Back to Login
                       </Link>
                     </div>
                   </div>
@@ -195,11 +145,15 @@ const LoginPage = () => {
           </>
         ) : (
           <>
-            <OTPVerification
-              email={otpEmail}
-              onSubmit={handleOtpVerification}
-              loading={otpVerificationLoading}
-            />
+            {!isOtpVerified ? (
+              <OTPVerification
+                email={otpEmail}
+                onSubmit={handleOtpVerification}
+                loading={otpVerificationLoading}
+              />
+            ) : (
+              <UpdatePassword email={otpEmail} />
+            )}
           </>
         )}
       </CardContent>
@@ -207,4 +161,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ResetPassword;
