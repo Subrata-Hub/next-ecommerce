@@ -25,6 +25,7 @@ import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import Link from "next/link";
 import {
+  USER_DASBOARD,
   WEBSITE_REGISTER,
   WEBSITE_RESETPASSWORD,
 } from "@/routes/WebsiteRoutes";
@@ -33,6 +34,8 @@ import axios from "axios";
 import OTPVerification from "@/components/application/OTPVerification";
 import { useDispatch } from "react-redux";
 import { login } from "@/store/slices/authSlice";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ADMIN_DASBOARD } from "@/routes/AddminPanelRoutes";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +43,8 @@ const LoginPage = () => {
   const [isTypePassword, setIsTypePassword] = useState(true);
   const [otpEmail, setOtpEmail] = useState();
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const formSchema = credentialsSchema
     .pick({
       email: true,
@@ -93,6 +98,13 @@ const LoginPage = () => {
 
       showToast("success", otpResponse.message);
       dispatch(login(otpResponse.data));
+      if (searchParams.has("callback")) {
+        router.push(searchParams.get("callback"));
+      } else {
+        otpResponse.data.role === "admin"
+          ? router.push(ADMIN_DASBOARD)
+          : router.push(USER_DASBOARD);
+      }
     } catch (error) {
       showToast("error", error.message);
     } finally {
