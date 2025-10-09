@@ -166,7 +166,7 @@ const MediaPage = () => {
           ) : (
             <>
               {data.pages.flatMap((page) =>
-                page.mediaData.map((media) => media._id)
+                page?.mediaData?.map((media) => media._id)
               ).length === 0 && (
                 <div className="text-center">Data not found</div>
               )}

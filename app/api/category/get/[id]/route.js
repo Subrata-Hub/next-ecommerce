@@ -1,7 +1,8 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseconnection";
 import { catchError, response } from "@/lib/helperFunction";
-import MediaModel from "@/models/MediaModel";
+import CategoryModel from "@/models/CategoryModel";
+
 import { isValidObjectId } from "mongoose";
 
 export const GET = async (request, { params }) => {
@@ -26,13 +27,13 @@ export const GET = async (request, { params }) => {
 
     filter._id = id;
 
-    const getMedia = await MediaModel.findOne(filter).lean();
+    const getCategory = await CategoryModel.findOne(filter).lean();
 
-    if (!getMedia) {
+    if (!getCategory) {
       return response(false, 401, "Media not found");
     }
 
-    return response(true, 200, "media found", getMedia);
+    return response(true, 200, "media found", getCategory);
   } catch (error) {
     return catchError(error);
   }

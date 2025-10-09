@@ -1,8 +1,9 @@
 import { isAuthenticated } from "@/lib/authentication";
-import cloudinary from "@/lib/cloudinary";
+
 import { connectDB } from "@/lib/databaseconnection";
 import { catchError, response } from "@/lib/helperFunction";
-import MediaModel from "@/models/MediaModel";
+import CategoryModel from "@/models/CategoryModel";
+
 import mongoose from "mongoose";
 
 export const PUT = async (request) => {
@@ -21,8 +22,8 @@ export const PUT = async (request) => {
       return response(false, 400, "Invalid or empty id list");
     }
 
-    const media = await MediaModel.find({ _id: { $in: ids } }).lean();
-    if (!media.length) {
+    const category = await CategoryModel.find({ _id: { $in: ids } }).lean();
+    if (!category.length) {
       return response(false, 404, "Data not found");
     }
 
@@ -35,12 +36,12 @@ export const PUT = async (request) => {
     }
 
     if (deleteType === "SD") {
-      await MediaModel.updateMany(
+      await CategoryModel.updateMany(
         { _id: { $in: ids } },
         { $set: { deletedAt: new Date().toISOString() } }
       );
     } else {
-      await MediaModel.updateMany(
+      await CategoryModel.updateMany(
         { _id: { $in: ids } },
         { $set: { deletedAt: null } }
       );
@@ -57,8 +58,6 @@ export const PUT = async (request) => {
 };
 
 export const DELETE = async (request) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
   try {
     const auth = await isAuthenticated("admin");
     if (!auth.isAuth) {
@@ -74,10 +73,8 @@ export const DELETE = async (request) => {
       return response(false, 400, "Invalid or empty id list");
     }
 
-    const media = await MediaModel.find({ _id: { $in: ids } })
-      .session(session)
-      .lean();
-    if (!media.length) {
+    const category = await CategoryModel.find({ _id: { $in: ids } }).lean();
+    if (!category.length) {
       return response(false, 404, "Data not found");
     }
 
@@ -89,22 +86,10 @@ export const DELETE = async (request) => {
       );
     }
 
-    await MediaModel.deleteMany({ _id: { $in: ids } }).session(session);
-    const publicIds = media.map((m) => m.public_id);
+    await CategoryModel.deleteMany({ _id: { $in: ids } });
 
-    try {
-      await cloudinary.api.delete_resources(publicIds);
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-    }
-
-    await session.commitTransaction();
-    session.endSession();
     return response(true, 200, "Data Deleted Permantly");
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     return catchError(error);
   }
 };
