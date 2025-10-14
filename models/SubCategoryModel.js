@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema(
+const subCategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -14,7 +14,11 @@ const categorySchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
     deletedAt: {
       type: Date,
       default: null,
@@ -24,7 +28,7 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const CategoryModel =
-  mongoose.models.Category ||
-  mongoose.model("Category", categorySchema, "categories");
-export default CategoryModel;
+const SubCategoryModel =
+  mongoose.models.SubCategory ||
+  mongoose.model("SubCategory", subCategorySchema, "subcategories");
+export default SubCategoryModel;

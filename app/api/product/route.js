@@ -1,7 +1,8 @@
 import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseconnection";
 import { catchError, response } from "@/lib/helperFunction";
-import CategoryModel from "@/models/CategoryModel";
+import ProductModel from "@/models/ProductModel";
+
 import { NextResponse } from "next/server";
 
 export const GET = async (request) => {
@@ -42,12 +43,48 @@ export const GET = async (request) => {
       matchQuery["$or"] = [
         { name: { $regex: globalFilter, $options: "i" } },
         { slug: { $regex: globalFilter, $options: "i" } },
+        { "categoryData.name": { $regex: globalFilter, $options: "i" } },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $toString: "$mrp" },
+              regex: globalFilter,
+              options: "i",
+            },
+          },
+        },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $toString: "$sellingPrice" },
+              regex: globalFilter,
+              options: "i",
+            },
+          },
+        },
+        {
+          $expr: {
+            $regexMatch: {
+              input: { $toString: "$discountPercentage" },
+              regex: globalFilter,
+              options: "i",
+            },
+          },
+        },
       ];
     }
 
     // Column filteration
     filters.forEach((filter) => {
-      matchQuery[filter.id] = { $regex: filter.value, $options: "i" };
+      if (
+        filter.id === "mrp" ||
+        filter.id === "sellingPrice" ||
+        filter.id === "discountPercentage"
+      ) {
+        matchQuery[filter.id] = Number(filter.value);
+      } else {
+        matchQuery[filter.id] = { $regex: filter.value, $options: "i" };
+      }
     });
 
     // Sorting
@@ -58,6 +95,20 @@ export const GET = async (request) => {
 
     // Aggreate pipeline
     const aggregatePipeline = [
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "categoryData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$categoryData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       { $match: matchQuery },
       { $sort: Object.keys(sortQuery).length ? sortQuery : { createdAt: -1 } },
       { $skip: start },
@@ -67,6 +118,10 @@ export const GET = async (request) => {
           _id: 1,
           name: 1,
           slug: 1,
+          mrp: 1,
+          sellingPrice: 1,
+          discountPercentage: 1,
+          category: "$categoryData.name",
           createdAt: 1,
           updatedAt: 1,
           deletedAt: 1,
@@ -75,14 +130,14 @@ export const GET = async (request) => {
     ];
 
     // Execute query
-    const getCategory = await CategoryModel.aggregate(aggregatePipeline);
+    const getProduct = await ProductModel.aggregate(aggregatePipeline);
 
     // Get totalCount
-    const totalRowCount = await CategoryModel.countDocuments(matchQuery);
+    const totalRowCount = await ProductModel.countDocuments(matchQuery);
 
     return NextResponse.json({
       success: true,
-      data: getCategory,
+      data: getProduct,
       meta: { totalRowCount },
     });
   } catch (error) {
