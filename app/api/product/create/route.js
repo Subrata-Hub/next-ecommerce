@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseconnection";
 import { catchError, response } from "@/lib/helperFunction";
 import { credentialsSchema } from "@/lib/zodSchema";
 import ProductModel from "@/models/ProductModel";
+import { encode } from "entities";
 
 export const POST = async (request) => {
   try {
@@ -40,7 +41,7 @@ export const POST = async (request) => {
       mrp: productData.mrp,
       sellingPrice: productData.sellingPrice,
       discountPercentage: productData.discountPercentage,
-      description: productData.description,
+      description: encode(productData.description),
       media: productData.media,
     });
 

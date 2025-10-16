@@ -31,7 +31,12 @@ function Select({
   const handleSelect = (option) => {
     if (isMulti) {
       // If multi-select, toggle the option
-      if (selected.includes(option.value)) {
+      // if (selected.includes(option.value)) {
+      //   setSelected(selected.filter((s) => s !== option.value));
+      // } else {
+      //   setSelected([...selected, option.value]);
+      // }
+      if (Array.isArray(selected) && selected.includes(option.value)) {
         setSelected(selected.filter((s) => s !== option.value));
       } else {
         setSelected([...selected, option.value]);
@@ -103,10 +108,10 @@ function Select({
           <CommandList>
             <CommandInput placeholder="Search options..." />
             <CommandEmpty>No options found.</CommandEmpty>
-            <CommandGroup>
+            {/* <CommandGroup>
               {options.map((option) => (
                 <CommandItem
-                  key={option.value}
+                  key={option?.value ?? option.label}
                   value={option.label}
                   onSelect={() => handleSelect(option)}
                 >
@@ -117,6 +122,30 @@ function Select({
                       (
                         isMulti
                           ? selected.includes(option.value)
+                          : selected === option.value
+                      )
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup> */}
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option?.value ?? option.label}
+                  value={option.label}
+                  onSelect={() => handleSelect(option)}
+                >
+                  {option.label}
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      (
+                        isMulti
+                          ? Array.isArray(selected) &&
+                            selected.includes(option.value)
                           : selected === option.value
                       )
                         ? "opacity-100"

@@ -75,18 +75,30 @@ const Datatable = ({
         filename: "csv-data",
       });
 
+      const sanitizeData = (data) =>
+        data.map((item) =>
+          Object.fromEntries(
+            Object.entries(item).map(([key, value]) => {
+              if (Array.isArray(value)) return [key, value.join(", ")];
+              if (typeof value === "object" && value !== null)
+                return [key, JSON.stringify(value)];
+              return [key, value];
+            })
+          )
+        );
+
       let csv;
       if (Object.keys(rowSelection).length > 0) {
         // export only selected rows
         const rowData = selectedRows.map((row) => row.original);
-        csv = generateCsv(csvConfig)(rowData);
+        csv = generateCsv(csvConfig)(sanitizeData(rowData));
       } else {
         // export all data
         const { data: response } = await axios.get(exportEndpoint);
         if (!response.success) {
           throw new Error(response.message);
         }
-        csv = generateCsv(csvConfig)(response.data);
+        csv = generateCsv(csvConfig)(sanitizeData(response.data));
       }
       download(csvConfig)(csv);
     } catch (error) {
