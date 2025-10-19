@@ -2,7 +2,7 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseconnection";
 import { catchError, response } from "@/lib/helperFunction";
 import { credentialsSchema } from "@/lib/zodSchema";
-import ProductModel from "@/models/ProductModel";
+
 import ProductVariantModel from "@/models/ProductVariantModel";
 
 export const POST = async (request) => {
