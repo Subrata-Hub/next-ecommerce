@@ -1,4 +1,4 @@
-export const ADMIN_DASBOARD = "/admin/dasboard";
+export const ADMIN_DASBOARD = "/admin/dashboard";
 
 // Media Route
 export const ADMIN_MEDIA_SHOW = "/admin/media";
