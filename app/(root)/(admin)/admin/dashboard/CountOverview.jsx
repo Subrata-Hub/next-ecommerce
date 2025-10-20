@@ -55,7 +55,9 @@ const CountOverview = () => {
               className={`flex items-center justify-between p-3 rounded-lg border shadow border-gray-200 dark:border-gray-800 ${color.border} bg-white dark:bg-card`}
             >
               <div>
-                <h4 className="font-medium text-gray-500">{item.category}</h4>
+                <h4 className="font-medium text-gray-500 dark:text-gray-200">
+                  {item.category}
+                </h4>
                 <span className="text-xl font-bold">{item.count}</span>
               </div>
               <div>

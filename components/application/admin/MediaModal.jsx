@@ -13,6 +13,7 @@ import Image from "next/image";
 import axios from "axios";
 import ModalMediaBlock from "./ModalMediaBlock";
 import { showToast } from "@/lib/showToast";
+import ButtonLoading from "../ButtonLoading";
 
 const MediaModal = ({
   open,
@@ -70,7 +71,7 @@ const MediaModal = ({
         className="sm:max-w-[80%] h-screen p-0 py-10 bg-transparent border-0 shadow-none"
       >
         <DialogDescription className="hidden"></DialogDescription>
-        <div className="h-[90vh] bg-white  p-3 rounded shadow">
+        <div className="h-[90vh] bg-white dark:bg-card  p-3 rounded shadow">
           <DialogHeader className="h-8 border-b">
             <DialogTitle className="text-black">Media Selection</DialogTitle>
           </DialogHeader>
@@ -100,6 +101,20 @@ const MediaModal = ({
                     </React.Fragment>
                   ))}
                 </div>
+                {hasNextPage ? (
+                  <div>
+                    <ButtonLoading
+                      type="button"
+                      onclick={() => fetchNextPage()}
+                      loading={isFetching}
+                      text="load more"
+                    />
+                  </div>
+                ) : (
+                  <p className="flex justify-center items-center">
+                    Nothing more to load
+                  </p>
+                )}
               </>
             )}
           </div>
