@@ -103,12 +103,12 @@ export const GET = async (request) => {
           as: "categoryData",
         },
       },
-      {
-        $unwind: {
-          path: "$categoryData",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
+      // {
+      //   $unwind: {
+      //     path: "$categoryData",
+      //     preserveNullAndEmptyArrays: true,
+      //   },
+      // },
       { $match: matchQuery },
       { $sort: Object.keys(sortQuery).length ? sortQuery : { createdAt: -1 } },
       { $skip: start },

@@ -45,7 +45,7 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [categoryOption, setCategoryOption] = useState([]);
   const { data: getCategory } = useFetch(
-    "/api/category?deleteType=SD&& size=1000"
+    "/api/category?deleteType=SD&size=1000"
   );
 
   const [open, setOpen] = useState(false);
@@ -123,6 +123,8 @@ const AddProduct = () => {
       }
 
       form.reset();
+      form.setValue("description", "");
+      setSelectedMedia([]);
       showToast("success", response.message);
     } catch (error) {
       showToast("error", error.message);
@@ -200,7 +202,7 @@ const AddProduct = () => {
                             options={categoryOption}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={false}
+                            isMulti={true}
                           />
                         </FormControl>
 

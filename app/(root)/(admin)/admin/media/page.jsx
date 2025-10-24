@@ -151,7 +151,7 @@ const MediaPage = () => {
                     <Button onClick={() => handleDelete(selectedMedia, "RSD")}>
                       Restore
                     </Button>
-                    <Button onClick={() => handleDelete(selectedMedia, "RSD")}>
+                    <Button onClick={() => handleDelete(selectedMedia, "PD")}>
                       Delete Permantly
                     </Button>
                   </>

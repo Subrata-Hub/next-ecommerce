@@ -226,7 +226,7 @@ const EditProduct = ({ params }) => {
                             options={categoryOption}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={false}
+                            isMulti={true}
                           />
                         </FormControl>
 

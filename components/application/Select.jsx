@@ -69,6 +69,7 @@ function Select({
             {Array.isArray(selected) && selected.length > 0
               ? selected.map((value) => {
                   const option = options.find((o) => o.value === value);
+                  if (!option) return null; // skip invalid entries
                   return (
                     <Badge key={value} className="me-2">
                       {option.label}

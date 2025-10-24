@@ -40,12 +40,12 @@ const MediaModal = ({
     hasNextPage,
   } = useInfiniteQuery({
     queryKey: ["MediaModal"],
-    queryFn: async ({ pageParams }) => await fetchMedia(pageParams),
+    queryFn: async ({ pageParam }) => await fetchMedia(pageParam),
     placeholderData: keepPreviousData,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPage) => {
       const nextPage = allPage.length;
-      return lastPage.hasMore ? nextPage : undefined;
+      return lastPage.hasmore ? nextPage : undefined;
     },
   });
   const handleClear = () => {
@@ -105,7 +105,7 @@ const MediaModal = ({
                   <div>
                     <ButtonLoading
                       type="button"
-                      onclick={() => fetchNextPage()}
+                      onClick={() => fetchNextPage()}
                       loading={isFetching}
                       text="load more"
                     />

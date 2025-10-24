@@ -49,7 +49,7 @@ const AddProductVariant = () => {
   const [productOption, setProductOption] = useState([]);
 
   const { data: getProduct } = useFetch(
-    "/api/product?deleteType=SD&& size=10000"
+    "/api/product?deleteType=SD&size=10000"
   );
 
   // const [open, setOpen] = useState(false);
