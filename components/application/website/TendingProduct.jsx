@@ -10,8 +10,10 @@ import slugify from "slugify";
 const TendingProduct = async () => {
   // const { data: getAllProducts } = useFetch("/api/category/list/Tranding");
   const { data: getAllProducts } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/Tranding`
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
   );
+
+  console.log(getAllProducts);
 
   return (
     <div className="px-4 md:px-40 pt-10 md:pt-28">
@@ -23,7 +25,7 @@ const TendingProduct = async () => {
           </p>
         </div>
         <div>
-          <Link href={WEBSITE_CATEGORY(slugify("Tranding").toLowerCase())}>
+          <Link href={WEBSITE_CATEGORY(slugify("tranding").toLowerCase())}>
             <button
               type="button"
               className=" px-8 py-3 bg-amber-400 rounded-2xl cursor-pointer"
@@ -38,13 +40,7 @@ const TendingProduct = async () => {
           <div className="text-center py-5">Product not found</div>
         )}
         {getAllProducts?.data?.map((prods) => (
-          <Card
-            key={prods._id}
-            name={prods.name}
-            mrp={prods.mrp}
-            url={prods.media?.[0].secure_url}
-            sellingPrice={prods.sellingPrice}
-          />
+          <Card key={prods._id} product={prods} />
         ))}
       </div>
     </div>

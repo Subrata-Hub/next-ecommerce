@@ -7,6 +7,10 @@ const productVariantSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    isDefaultVariant: {
+      type: Boolean,
+      default: false,
+    },
     weight: [
       {
         type: Number,

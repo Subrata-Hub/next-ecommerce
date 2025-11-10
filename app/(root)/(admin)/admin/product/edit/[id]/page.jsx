@@ -46,7 +46,7 @@ const EditProduct = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [categoryOption, setCategoryOption] = useState([]);
   const { data: getCategory } = useFetch(
-    "/api/category?deleteType=SD&& size=1000"
+    "/api/category?deleteType=SD&size=1000"
   );
   const { data: getProduct, loading: getProductLoading } = useFetch(
     `/api/product/get/${id}`

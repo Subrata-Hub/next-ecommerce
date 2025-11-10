@@ -16,7 +16,13 @@ import {
 import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/useFetch";
 import { showToast } from "@/lib/showToast";
-import { creams, dietarys, flavours, weightsData } from "@/lib/utils";
+import {
+  creams,
+  defaultVariant,
+  dietarys,
+  flavours,
+  weightsData,
+} from "@/lib/utils";
 import { credentialsSchema } from "@/lib/zodSchema";
 import {
   ADMIN_DASBOARD,
@@ -48,28 +54,29 @@ const AddProductVariant = () => {
   const [loading, setLoading] = useState(false);
   const [productOption, setProductOption] = useState([]);
 
-  const { data: getProduct } = useFetch(
+  const { data: allProduct } = useFetch(
     "/api/product?deleteType=SD&size=10000"
   );
 
-  // const [open, setOpen] = useState(false);
-  // const [selectedMedia, setSelectedMedia] = useState([]);
-
   useEffect(() => {
-    if (getProduct && getProduct.success) {
-      const data = getProduct.data;
-      const option = data.map((product) => ({
-        label: product.name,
-        value: product._id,
+    if (allProduct && allProduct.success) {
+      const data = allProduct.data;
+
+      const uniqueProducts = Array.from(
+        new Map(allProduct.data.map((p) => [p._id, p])).values()
+      );
+      const options = uniqueProducts.map((p) => ({
+        label: p.name,
+        value: p._id,
       }));
-      setProductOption(option);
+      setProductOption(options);
     }
-  }, [getProduct]);
+  }, [allProduct]);
 
   const formSchema = credentialsSchema.pick({
     product: true,
+    isDefaultVariant: true,
     weight: true,
-
     cream: true,
     flavour: true,
     dietary: true,
@@ -83,6 +90,7 @@ const AddProductVariant = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       product: "",
+      isDefaultVariant: false,
       weight: [],
 
       cream: "",
@@ -102,6 +110,35 @@ const AddProductVariant = () => {
       form.setValue("discountPercentage", Math.round(discountPercentage));
     }
   }, [form.watch("mrp"), form.watch("sellingPrice")]);
+
+  useEffect(() => {
+    const isDefaultVariant = form.getValues("isDefaultVariant");
+    const selectedProductId = form.getValues("product");
+
+    if (isDefaultVariant && selectedProductId) {
+      const fetchProduct = async () => {
+        try {
+          const { data: res } = await axios.get(
+            `/api/product/get-product/${selectedProductId}`
+          );
+          if (res.success && res.data) {
+            const product = res.data;
+            form.setValue("mrp", product.mrp);
+            form.setValue("sellingPrice", product.sellingPrice);
+            form.setValue("discountPercentage", product.discountPercentage);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      fetchProduct();
+    } else {
+      form.setValue("mrp", 0);
+      form.setValue("sellingPrice", 0);
+      form.setValue("discountPercentage", 0);
+    }
+  }, [form.watch("isDefaultVariant")]);
 
   const onSubmit = async (values) => {
     setLoading(true);
@@ -148,7 +185,7 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Product<span className="text-red-500"></span>
+                          Product<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -172,7 +209,7 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Weight<span className="text-red-500"></span>
+                          Weight<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -196,7 +233,7 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Cream<span className="text-red-500"></span>
+                          Cream<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -219,7 +256,7 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          flavour<span className="text-red-500"></span>
+                          flavour<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -242,7 +279,7 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          dietary<span className="text-red-500"></span>
+                          dietary<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -266,11 +303,12 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          MRP<span className="text-red-500"></span>
+                          MRP<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="Number"
+                            readOnly={form.watch("isDefaultVariant")}
                             placeholder="Enter MRP"
                             {...field}
                           />
@@ -288,11 +326,12 @@ const AddProductVariant = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          sellingPrice<span className="text-red-500"></span>
+                          sellingPrice<span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="Number"
+                            readOnly={form.watch("isDefaultVariant")}
                             placeholder="Enter sellingPrice"
                             {...field}
                           />
@@ -311,7 +350,7 @@ const AddProductVariant = () => {
                       <FormItem>
                         <FormLabel>
                           discountPercentage
-                          <span className="text-red-500"></span>
+                          <span className="text-yellow-600">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -319,6 +358,28 @@ const AddProductVariant = () => {
                             readOnly
                             placeholder="Enter discount Percentage"
                             {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="mb-1">
+                  <FormField
+                    control={form.control}
+                    name="isDefaultVariant"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>IsDefaultVariant</FormLabel>
+                        <FormControl>
+                          <Select
+                            options={defaultVariant}
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            isMulti={false}
                           />
                         </FormControl>
 

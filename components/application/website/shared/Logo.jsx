@@ -5,7 +5,13 @@ import Logos from "@/public/assets/images/CakeoClock.jpg";
 const Logo = () => {
   return (
     <div>
-      <Image src={Logos.src} alt="logo" width={130} height={130} />
+      <Image
+        src={Logos.src}
+        alt="logo"
+        width={130}
+        height={100}
+        className="w-[130px] h-[100px]"
+      />
     </div>
   );
 };

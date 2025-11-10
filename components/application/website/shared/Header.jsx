@@ -4,6 +4,7 @@ import Inquire from "./Inquire";
 import { RiShoppingBag4Line } from "react-icons/ri";
 import { MdFavoriteBorder } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
+import ShoppingCard from "./ShoppingCard";
 
 const Header = () => {
   return (
@@ -12,7 +13,8 @@ const Header = () => {
       <Searchbar />
       <Inquire />
       <div className="flex justify-between items-center gap-8 ">
-        <RiShoppingBag4Line className="text-2xl" />
+        <ShoppingCard />
+
         <MdFavoriteBorder className="text-2xl" />
         <FaRegUser className="text-2xl" />
       </div>

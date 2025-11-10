@@ -7,7 +7,11 @@ export const WEBSITE_RESETPASSWORD = "/auth/reset-password";
 export const USER_DASBOARD = "/my-account";
 
 // Category routes
-export const WEBSITE_CATEGORY = (name) => (name ? `/category/${name}` : "");
+export const WEBSITE_CATEGORY = (slug) => (slug ? `/category/${slug}` : "");
 
 // Product routes
-export const WEBSITE_PRODUCT = (name) => (name ? `/products/${name}` : "");
+export const PRODUCT_DETAILS = (slug) =>
+  slug ? `/product/${slug}` : "/product";
+
+// Cart route
+export const WEBSITE_CART = "/cart";

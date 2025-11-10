@@ -19,6 +19,7 @@ export const PUT = async (request) => {
     const schema = credentialsSchema.pick({
       _id: true,
       product: true,
+      isDefaultVariant: true,
       weight: true,
       cream: true,
       flavour: true,
@@ -42,7 +43,23 @@ export const PUT = async (request) => {
       return response(false, 404, "Data not found");
     }
 
+    if (productVariantData.isDefaultVariant) {
+      const productVariants = await ProductVariantModel.findOne({
+        deletedAt: null,
+        isDefaultVariant: true,
+        product: productVariantData.product,
+      });
+      if (productVariants) {
+        return response(
+          false,
+          400,
+          "Default Varient Already use you can check all product variants"
+        );
+      }
+    }
+
     getProductVariant.product = productVariantData.product;
+    getProductVariant.isDefaultVariant = productVariantData.isDefaultVariant;
     getProductVariant.weight = productVariantData.weight;
     getProductVariant.cream = productVariantData.cream;
     getProductVariant.flavour = productVariantData.flavour;

@@ -15,7 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/useFetch";
 import { showToast } from "@/lib/showToast";
-import { creams, dietarys, flavours, weightsData } from "@/lib/utils";
+import {
+  creams,
+  defaultVariant,
+  dietarys,
+  flavours,
+  weightsData,
+} from "@/lib/utils";
 import { credentialsSchema } from "@/lib/zodSchema";
 import {
   ADMIN_DASBOARD,
@@ -48,9 +54,7 @@ const EditProduct = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [productOption, setProductOption] = useState([]);
 
-  const { data: getProduct } = useFetch(
-    "/api/product?deleteType=SD&& size=1000"
-  );
+  const { data: getProduct } = useFetch("/api/product?deleteType=SD&size=1000");
 
   console.log(getProduct);
 
@@ -61,6 +65,7 @@ const EditProduct = ({ params }) => {
   const formSchema = credentialsSchema.pick({
     _id: true,
     product: true,
+    isDefaultVariant: true,
     weight: true,
 
     cream: true,
@@ -77,6 +82,7 @@ const EditProduct = ({ params }) => {
     defaultValues: {
       _id: id,
       product: "",
+      isDefaultVariant: false,
       weight: [],
 
       cream: "",
@@ -98,18 +104,20 @@ const EditProduct = ({ params }) => {
 
   useEffect(() => {
     if (getProductVariant && getProductVariant.success) {
-      const product = getProductVariant.data;
+      const productVariant = getProductVariant.data;
       form.reset({
-        _id: product?._id,
-        product: product.product,
-        weight: product.weight,
+        _id: productVariant?._id,
 
-        cream: product.cream,
-        flavour: product.flavour,
-        dietary: product.dietary,
-        mrp: product.mrp,
-        sellingPrice: product.sellingPrice,
-        discountPercentage: product.discountPercentage,
+        product: productVariant.product,
+        isDefaultVariant: productVariant.isDefaultVariant,
+        weight: productVariant.weight,
+
+        cream: productVariant.cream,
+        flavour: productVariant.flavour,
+        dietary: productVariant.dietary,
+        mrp: productVariant.mrp,
+        sellingPrice: productVariant.sellingPrice,
+        discountPercentage: productVariant.discountPercentage,
       });
     }
   }, [getProductVariant]);
@@ -122,6 +130,39 @@ const EditProduct = ({ params }) => {
       form.setValue("discountPercentage", Math.round(discountPercentage));
     }
   }, [form.watch("mrp"), form.watch("sellingPrice")]);
+
+  useEffect(() => {
+    const isDefaultVariant = form.getValues("isDefaultVariant");
+    const selectedProductId = form.getValues("product");
+    const productVariant = getProductVariant?.data;
+    const mrp = productVariant?.mrp || 0;
+    const sellingPrice = productVariant?.sellingPrice || 0;
+    const discountPercentage = productVariant?.discountPercentage || 0;
+
+    if (isDefaultVariant && selectedProductId) {
+      const fetchProduct = async () => {
+        try {
+          const { data: res } = await axios.get(
+            `/api/product/get-product/${selectedProductId}`
+          );
+          if (res.success && res.data) {
+            const product = res.data;
+            form.setValue("mrp", product.mrp);
+            form.setValue("sellingPrice", product.sellingPrice);
+            form.setValue("discountPercentage", product.discountPercentage);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      fetchProduct();
+    } else {
+      form.setValue("mrp", mrp);
+      form.setValue("sellingPrice", sellingPrice);
+      form.setValue("discountPercentage", discountPercentage);
+    }
+  }, [form.watch("isDefaultVariant")]);
 
   const onSubmit = async (values) => {
     setLoading(true);
@@ -332,6 +373,29 @@ const EditProduct = ({ params }) => {
                             readOnly
                             placeholder="Enter discount Percentage"
                             {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mb-1">
+                  <FormField
+                    control={form.control}
+                    name="isDefaultVariant"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          IsDefaultVariant<span className="text-red-500"></span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            options={defaultVariant}
+                            selected={field.value}
+                            setSelected={field.onChange}
+                            isMulti={false}
                           />
                         </FormControl>
 

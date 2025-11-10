@@ -47,6 +47,15 @@ export const GET = async (request) => {
         { "productData.name": { $regex: globalFilter, $options: "i" } },
         {
           $expr: {
+            $regexMatch: {
+              input: { $toString: "$isDefaultVariant" },
+              regex: globalFilter,
+              options: "i",
+            },
+          },
+        },
+        {
+          $expr: {
             $anyElementTrue: {
               $map: {
                 input: "$weight",
@@ -105,6 +114,8 @@ export const GET = async (request) => {
           $regex: filter.value,
           $options: "i",
         };
+      } else if (filter.id === "isDefaultVariant") {
+        matchQuery[filter.id] = filter.value === "true";
       } else {
         matchQuery[filter.id] = { $regex: filter.value, $options: "i" };
       }
@@ -140,6 +151,7 @@ export const GET = async (request) => {
         $project: {
           _id: 1,
           product: "$productData.name",
+          isDefaultVariant: 1,
           weight: 1,
           cream: 1,
           flavour: 1,
@@ -147,7 +159,6 @@ export const GET = async (request) => {
           mrp: 1,
           sellingPrice: 1,
           discountPercentage: 1,
-
           createdAt: 1,
           updatedAt: 1,
           deletedAt: 1,

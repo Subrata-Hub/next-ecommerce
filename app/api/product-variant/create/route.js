@@ -18,6 +18,7 @@ export const POST = async (request) => {
 
     const schema = credentialsSchema.pick({
       product: true,
+      isDefaultVariant: true,
       weight: true,
 
       cream: true,
@@ -35,17 +36,25 @@ export const POST = async (request) => {
 
     const productVariantData = validate.data;
 
-    const productVariants = await ProductVariantModel.findOne({
-      product: productVariantData.product,
-    });
-    if (productVariants) {
-      return response(false, 400, "Product already used for variant");
+    if (productVariantData.isDefaultVariant) {
+      const productVariants = await ProductVariantModel.findOne({
+        deletedAt: null,
+        isDefaultVariant: true,
+        product: productVariantData.product,
+      });
+      if (productVariants) {
+        return response(
+          false,
+          400,
+          "Default Varient Already use you can check all product variants"
+        );
+      }
     }
 
     const newProductVariant = new ProductVariantModel({
       product: productVariantData.product,
+      isDefaultVariant: productVariantData.isDefaultVariant,
       weight: productVariantData.weight,
-
       cream: productVariantData.cream,
       flavour: productVariantData.flavour,
       dietary: productVariantData.dietary,

@@ -1,0 +1,74 @@
+import { connectDB } from "@/lib/databaseconnection";
+import { catchError, response } from "@/lib/helperFunction";
+
+import ReviewModel from "@/models/ReviewModel";
+import mongoose from "mongoose";
+
+export const GET = async (request, { params }) => {
+  try {
+    await connectDB();
+    const searchParams = request.nextUrl.searchParams;
+    const { productId } = await params;
+    // const searchParams = searchParams.nextUrl.searchParams;
+    const page = parseInt(searchParams.get("page")) || 0;
+    const limit = 10;
+    const skip = page * limit;
+
+    let matchQuery = {
+      deletedAt: null,
+      product: new mongoose.Types.ObjectId(productId),
+    };
+
+    const aggreation = [
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      {
+        $unwind: { path: `$userData`, preserveNullAndEmptyArrays: true },
+      },
+      {
+        $match: matchQuery,
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      { $skip: skip },
+      { $limit: limit + 1 },
+      // { $skip: start },
+      {
+        $project: {
+          _id: 1,
+          reviewedBy: "$userData.name",
+          avatar: "$userData.avatar",
+          rating: 1,
+          title: 1,
+          review: 1,
+          createdAt: 1,
+        },
+      },
+    ];
+
+    const reviews = await ReviewModel.aggregate(aggreation);
+    const totalReview = await ReviewModel.countDocuments(matchQuery);
+
+    // check if more data exit
+    let nextPage = null;
+    if (reviews.length > limit) {
+      nextPage = page + 1;
+      reviews.pop();
+    }
+
+    return response(true, 200, "Review Data", {
+      reviews,
+      nextPage,
+      totalReview,
+    });
+  } catch (error) {
+    return catchError(error);
+  }
+};

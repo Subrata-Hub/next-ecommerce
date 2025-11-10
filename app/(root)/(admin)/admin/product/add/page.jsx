@@ -150,7 +150,7 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Name<span className="text-red-500"></span>
+                          Name<span className="text-yellow-300">*</span>{" "}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -173,7 +173,7 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Slug<span className="text-red-500"></span>
+                          Slug<span className="text-yellow-300">*</span>{" "}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -195,7 +195,7 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Category<span className="text-red-500"></span>
+                          Category <span className="text-yellow-300">*</span>{" "}
                         </FormLabel>
                         <FormControl>
                           <Select
@@ -218,7 +218,9 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          MRP<span className="text-red-500"></span>
+                          MRP <span className="text-yellow-300">*</span> (For
+                          default Variant)
+                          <span className="text-red-500"></span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -240,7 +242,9 @@ const AddProduct = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          sellingPrice<span className="text-red-500"></span>
+                          sellingPrice{" "}
+                          <span className="text-yellow-300">*</span> (For
+                          default Variant)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -263,7 +267,7 @@ const AddProduct = () => {
                       <FormItem>
                         <FormLabel>
                           discountPercentage
-                          <span className="text-red-500"></span>
+                          <span className="text-yellow-300">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -282,7 +286,8 @@ const AddProduct = () => {
 
                 <div className="mb-5 md:col-span-2">
                   <FormLabel className="mb-2">
-                    Description<span className="text-red-500">*</span>
+                    Description
+                    <span className="text-yellow-500">*</span>{" "}
                   </FormLabel>
                   <Editor onChange={editor} />
                   <FormMessage></FormMessage>

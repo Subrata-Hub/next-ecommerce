@@ -23,13 +23,7 @@ const FeaturesProduct = async () => {
           <div className="text-center py-5">Product not found</div>
         )}
         {getFeaturedProduct?.data?.map((prods) => (
-          <Card
-            key={prods._id}
-            name={prods.name}
-            mrp={prods.mrp}
-            url={prods.media?.[0].secure_url}
-            sellingPrice={prods.sellingPrice}
-          />
+          <Card key={prods._id} product={prods} />
         ))}
       </div>
     </div>

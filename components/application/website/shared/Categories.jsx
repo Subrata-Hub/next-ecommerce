@@ -20,8 +20,8 @@ const Categories = () => {
   return (
     // 1. Add relative positioning to the nav for context if needed,
     //    though Dialog is usually viewport-based.
-    <nav className="flex px-4 md:px-40 py-4 border-b-2 border-gray-100 z-1000000">
-      <ul className="flex justify-between items-center gap-10 w-full">
+    <nav className="flex px-4 md:px-40  py-4 border-2 border-gray-100 z-1000">
+      <ul className="flex justify-between items-center gap-8 w-full ml-7">
         {categorieMenu?.map((categorie, index) => (
           <React.Fragment key={index}>
             <li className="relative">
@@ -39,7 +39,7 @@ const Categories = () => {
               <div className="absolute top-[190px] z-2000000">
                 {categorie?.subCategory && (
                   <div
-                    className="flex flex-wrap bg-white border-2 border-gray-200  p-8 w-[1200px] h-auto gap-5"
+                    className="flex flex-wrap bg-white border-2 border-gray-200 p-8  w-[1200px] h-auto gap-4"
                     onMouseLeave={() => setOpenIndex(null)}
                   >
                     {categorie.subCategory.map((item, subIndex) => (
@@ -49,11 +49,7 @@ const Categories = () => {
                           item?.color ? item?.color : ""
                         }   cursor-pointer w-[360px] h-40 rounded-xl`}
                       >
-                        <Link
-                          href={WEBSITE_CATEGORY(
-                            slugify(item?.title).toLowerCase()
-                          )}
-                        >
+                        <Link href={WEBSITE_CATEGORY(item.slug)}>
                           <div className="flex justify-between">
                             <div
                               className={`flex flex-col gap-y-4 ${item?.text} pt-4 pl-4`}
