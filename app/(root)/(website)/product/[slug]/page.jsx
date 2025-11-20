@@ -1,4 +1,7 @@
+import CoreInfo from "@/components/application/website/CoreInfo";
 import ProductDetails from "@/components/application/website/ProductDetails";
+import ProductReview from "@/components/application/website/ProductReview";
+import SimilarProducts from "@/components/application/website/SimilarProducts";
 import axios from "axios";
 import React from "react";
 
@@ -9,8 +12,6 @@ const page = async ({ params }) => {
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/details/${slug}`
   );
 
-  console.log(productData);
-
   if (!productData.success) {
     return (
       <div className="flex justify-center items-center py-10 h-[400px]">
@@ -19,9 +20,24 @@ const page = async ({ params }) => {
     );
   }
 
-  console.log(productData);
+  const product = productData?.data?.product?.[0];
 
-  return <ProductDetails product={productData?.data?.product?.[0]} />;
+  if (!product)
+    return (
+      <div className="flex justify-center items-center">
+        <Loadings />
+      </div>
+    );
+
+  return (
+    <div className="lg:px-40">
+      <ProductDetails product={product} />
+      <CoreInfo />
+      <SimilarProducts product={product} />
+
+      <ProductReview productId={product._id} />
+    </div>
+  );
 };
 
 export default page;

@@ -11,31 +11,26 @@ const productVariantSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    weight: [
-      {
-        type: Number,
-        required: true,
-      },
-    ],
-    cream: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    weight: {
+      type: Number,
+      required: true,
+    },
 
-    flavour: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
-    dietary: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
+    cream: {
+      type: String,
+      required: true,
+    },
+
+    flavour: {
+      type: String,
+      required: true,
+    },
+
+    dietary: {
+      type: String,
+      required: true,
+    },
+
     mrp: {
       type: Number,
       required: true,

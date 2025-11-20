@@ -19,6 +19,7 @@ export const GET = async (request, { params }) => {
     const flavour = searchParams.get("flavour");
     const cream = searchParams.get("cream");
     const dietary = searchParams.get("dietary");
+    const variantId = searchParams.get("variantId");
 
     // Dynamic filter
     const filterOption = { product: id };
@@ -26,6 +27,7 @@ export const GET = async (request, { params }) => {
     if (flavour) filterOption.flavour = { $in: [flavour] };
     if (cream) filterOption.cream = { $in: [cream] };
     if (dietary) filterOption.dietary = { $in: [dietary] };
+    if (variantId) filterOption._id = variantId;
 
     const Productvariant = await ProductVariantModel.findOne(
       filterOption
@@ -34,7 +36,7 @@ export const GET = async (request, { params }) => {
     return response(
       true,
       200,
-      "Products for this category found",
+      "Products Variant found for this product",
       Productvariant
     );
   } catch (error) {

@@ -41,9 +41,14 @@ export const GET = async (request) => {
     // Global search
     if (globalFilter) {
       matchQuery["$or"] = [
-        { cream: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
-        { flavour: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
-        { dietary: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
+        // { cream: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
+        // { flavour: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
+        // { dietary: { $elemMatch: { $regex: globalFilter, $options: "i" } } },
+
+        { cream: { $regex: globalFilter, $options: "i" } },
+        { flavour: { $regex: globalFilter, $options: "i" } },
+        { dietary: { $regex: globalFilter, $options: "i" } },
+
         { "productData.name": { $regex: globalFilter, $options: "i" } },
         {
           $expr: {
@@ -54,20 +59,30 @@ export const GET = async (request) => {
             },
           },
         },
+        // {
+        //   $expr: {
+        //     $anyElementTrue: {
+        //       $map: {
+        //         input: "$weight",
+        //         as: "w",
+        //         in: {
+        //           $regexMatch: {
+        //             input: { $toString: "$$w" },
+        //             regex: globalFilter,
+        //             options: "i",
+        //           },
+        //         },
+        //       },
+        //     },
+        //   },
+        // },
+
         {
           $expr: {
-            $anyElementTrue: {
-              $map: {
-                input: "$weight",
-                as: "w",
-                in: {
-                  $regexMatch: {
-                    input: { $toString: "$$w" },
-                    regex: globalFilter,
-                    options: "i",
-                  },
-                },
-              },
+            $regexMatch: {
+              input: { $toString: "$weight" },
+              regex: globalFilter,
+              options: "i",
             },
           },
         },

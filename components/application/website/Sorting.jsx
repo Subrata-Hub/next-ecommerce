@@ -31,7 +31,7 @@ const Sorting = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <h1 className="text-3xl font-bold">{categoryData.name}</h1>
+        <h1 className="text-3xl font-bold">{categoryData?.name}</h1>
         {productLength && (
           <span className="text-gray-500 font-semibold">{`(${productLength} Items)`}</span>
         )}

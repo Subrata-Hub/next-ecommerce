@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   count: 0,
   products: [],
+  selectedVariant: {},
 };
 
 export const cartSlice = createSlice({
@@ -23,6 +24,10 @@ export const cartSlice = createSlice({
       state.count += payload.quantity;
     },
 
+    addVariant: (state, action) => {
+      state.selectedVariant = action.payload;
+    },
+
     removeProductToCart: (state, action) => {
       const payload = action.payload;
 
@@ -32,17 +37,28 @@ export const cartSlice = createSlice({
           product.variantId === payload.variantId
       );
 
-      if (productIndex !== -1) {
-        const productToRemove = state.products[productIndex]; // Decrement quantity
-        productToRemove.quantity -= 1; // Assuming you remove one item at a time // If quantity drops to zero, remove the product entirely from the array
+      // If product not found, do nothing
+      if (productIndex === -1) {
+        return;
+      }
 
+      const productToRemove = state.products[productIndex];
+
+      if (productToRemove.quantity === payload.quantity) {
+        state.count = Math.max(0, state.count - productToRemove.quantity);
+        state.products.splice(productIndex, 1);
+      } else {
         if (productToRemove.quantity <= 0) {
+          // state.count = Math.max(0, state.count - productToRemove.quantity);
           state.products.splice(productIndex, 1);
-        } // Decrement the total count
+        }
 
+        productToRemove.quantity -= 1;
+        // Decrement the total cart count by one
         state.count = Math.max(0, state.count - 1);
       }
     },
+
     clearCart: (state, action) => {
       state.products = [];
       state.count = 0;
@@ -50,6 +66,6 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addProductToCart, removeProductToCart, clearCart } =
+export const { addProductToCart, removeProductToCart, addVariant, clearCart } =
   cartSlice.actions;
 export default cartSlice.reducer;

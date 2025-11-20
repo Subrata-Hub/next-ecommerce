@@ -67,7 +67,6 @@ const EditProduct = ({ params }) => {
     product: true,
     isDefaultVariant: true,
     weight: true,
-
     cream: true,
     flavour: true,
     dietary: true,
@@ -83,8 +82,7 @@ const EditProduct = ({ params }) => {
       _id: id,
       product: "",
       isDefaultVariant: false,
-      weight: [],
-
+      weight: "",
       cream: "",
       flavour: "",
       dietary: "",
@@ -233,7 +231,7 @@ const EditProduct = ({ params }) => {
                             options={weightsData}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -257,7 +255,7 @@ const EditProduct = ({ params }) => {
                             options={creams}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -280,7 +278,7 @@ const EditProduct = ({ params }) => {
                             options={flavours}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -303,7 +301,7 @@ const EditProduct = ({ params }) => {
                             options={dietarys}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 

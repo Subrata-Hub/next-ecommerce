@@ -1,32 +1,95 @@
 "use client";
+import { getLocalCartId, setLocalCartId } from "@/lib/helperFunction";
+import { showToast } from "@/lib/showToast";
 import {
   addProductToCart,
   removeProductToCart,
 } from "@/store/slices/cartSlice";
-import React from "react";
+import axios from "axios";
+import { Loader2Icon } from "lucide-react";
+import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { FiMinus } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-const AddToCard = ({ quantity, setQuantity, productId, productVariantId }) => {
+
+const AddToCard = ({
+  quantity,
+  setQuantity,
+  productId,
+  productVariantId,
+  setUpdateLoading,
+  updateLoading,
+  isDiffLoading = false,
+}) => {
   const dispatch = useDispatch();
 
-  const handleAddToCardClick = (actionType) => {
+  const handleAddToCardClick = async (actionType) => {
+    let currentCartId = getLocalCartId();
+
+    // 1. Determine quantity to send (+1 or -1)
+    const quantityToSend = actionType === "add" ? 1 : -1;
+
     const productData = {
       productId: productId,
-      variantId: productVariantId, // We always dispatch a quantity of 1 for the click action
-      quantity: 1,
+      variantId: productVariantId,
+      quantity: quantityToSend, // This is +1 or -1
+      cartId: currentCartId ? currentCartId : null,
     };
 
+    // --- Start: Optimistic UI & Redux Update ---
     if (actionType === "add") {
-      setQuantity((prev) => prev + 1); // Dispatch productData instead of existingProduct
-      dispatch(addProductToCart(productData));
+      setQuantity((prev) => prev + 1);
+      dispatch(addProductToCart({ ...productData, quantity: 1 }));
     } else {
-      // This check should probably prevent decrement if quantity is 1 in the store,
-      // but for now we follow the local state check:
-      if (quantity !== 1) {
-        setQuantity((prev) => prev - 1); // Dispatch productData instead of existingProduct
-        dispatch(removeProductToCart(productData));
+      if (quantity > 0) {
+        setQuantity((prev) => prev - 1);
+        dispatch(removeProductToCart({ ...productData, quantity: 1 }));
+      } else {
+        return; // Don't proceed if local quantity is 0
       }
+    }
+    // --- End: Optimistic UI & Redux Update ---
+
+    try {
+      setUpdateLoading(true);
+      // 2. API Call (Consolidated)
+      const { data: response } = await axios.post(
+        "/api/cart/addToCart",
+        productData
+      );
+
+      // setUpdateLoading(false);
+
+      if (!response.success) {
+        // If API fails, throw error for catch block
+        throw new Error(response.message);
+        // setUpdateLoading(false);
+      }
+
+      // 3. SAVE CART ID (Crucial for new guest carts)
+      if (response.data && response.data.cartId) {
+        setLocalCartId(response.data.cartId);
+      }
+      setUpdateLoading(false);
+
+      showToast("success", response.message || "Cart updated successfully");
+    } catch (error) {
+      console.error(error);
+      // setUpdateLoading(false);
+      showToast("error", error.message || "Failed to update cart");
+
+      // 4. Rollback State if API fails
+      // Note: We use the opposite action to revert the optimistic update
+
+      if (actionType === "add") {
+        setQuantity((prev) => prev - 1);
+        dispatch(removeProductToCart({ ...productData, quantity: 1 }));
+      } else if (quantity > 0) {
+        setQuantity((prev) => prev + 1);
+        dispatch(addProductToCart({ ...productData, quantity: 1 }));
+      }
+    } finally {
+      setUpdateLoading(false); // ADDED: Guaranteed loading cleanup
     }
   };
 
@@ -34,26 +97,34 @@ const AddToCard = ({ quantity, setQuantity, productId, productVariantId }) => {
     <div className="w-full flex justify-between items-center px-4">
       <button
         type="button"
-        className="h-full w-10 justify-center items-center "
+        className="h-full w-10 justify-center items-center mr-3"
         onClick={(e) => {
-          // <-- Change here
-          e.stopPropagation(); // <-- Crucial: Stop event bubbling
+          e.stopPropagation();
           handleAddToCardClick("remove");
         }}
+        disabled={updateLoading}
       >
-        <FiMinus />
+        {updateLoading && isDiffLoading ? (
+          <Loader2Icon className="animate-spin" />
+        ) : (
+          <FiMinus />
+        )}
       </button>
-      <span>{quantity}</span>
+      <span className="flex-1 text-center font-medium">{quantity}</span>
       <button
         type="button"
-        className="h-full w-10 justify-center items-center "
+        className="h-full w-10 justify-center items-center ml-4"
         onClick={(e) => {
-          // <-- Change here
-          e.stopPropagation(); // <-- Crucial: Stop event bubbling
+          e.stopPropagation();
           handleAddToCardClick("add");
         }}
+        disabled={updateLoading}
       >
-        <FiPlus />
+        {updateLoading && isDiffLoading ? (
+          <Loader2Icon className="animate-spin" />
+        ) : (
+          <FiPlus className="" />
+        )}
       </button>
     </div>
   );

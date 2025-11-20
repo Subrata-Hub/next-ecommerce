@@ -31,71 +31,31 @@ export const GET = async (request) => {
       },
 
       // Compute distinct fields from variants
+
       {
         $addFields: {
-          weights: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.weight",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-            ],
-          },
-          flavours: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.flavour",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-            ],
-          },
-          creams: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.cream",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-              [],
-            ],
-          },
-
-          dietarys: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.dietary",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-              [],
-            ],
-          },
+          weights: { $setUnion: "$variants.weight" },
+          flavours: { $setUnion: "$variants.flavour" },
+          creams: { $setUnion: "$variants.cream" },
+          dietarys: { $setUnion: "$variants.dietary" },
         },
       },
 
       {
         $addFields: {
           variants: {
-            $filter: {
-              input: "$variants",
-              as: "variant",
-              cond: {
-                $and: [
-                  { $eq: ["$$variant.isDefaultVariant", true] },
-
-                  { $eq: ["$$variant.deletedAt", null] },
-                ],
+            $sortArray: {
+              input: {
+                $filter: {
+                  input: "$variants",
+                  as: "variant",
+                  cond: {
+                    $and: [{ $eq: ["$$variant.deletedAt", null] }],
+                  },
+                },
               },
+
+              sortBy: { isDefaultVariant: -1 },
             },
           },
         },
@@ -127,7 +87,9 @@ export const GET = async (request) => {
           flavours: 1,
           creams: 1,
           dietarys: 1,
+
           variants: {
+            _id: 1,
             weight: 1,
             flavour: 1,
             cream: 1,

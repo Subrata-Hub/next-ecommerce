@@ -16,31 +16,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  PRODUCT_DETAILS,
-  WEBSITE_CART,
-  WEBSITE_CATEGORY,
-} from "@/routes/WebsiteRoutes";
+import { WEBSITE_CART, WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import imgPlaceHolder from "@/public/assets/images/img-placeholder.webp";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
-import { decode } from "entities";
+
 import axios from "axios";
-import ButtonLoading from "../ButtonLoading";
+
 import AddToCard from "./shared/AddToCard";
-import { Button } from "@/components/ui/button";
+
 import { Loader2Icon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProductToCart } from "@/store/slices/cartSlice";
 import { showToast } from "@/lib/showToast";
 import { useRouter } from "next/navigation";
-import CoreInfo from "./CoreInfo";
-import ProductReview from "./ProductReview";
-import { Portal } from "@radix-ui/react-dialog";
-import SimilarProducts from "./SimilarProducts";
+
+import DOMPurify from "dompurify";
+import Loadings from "../Loadings";
+
+// Helper to get/set Cart ID from LocalStorage
+const getLocalCartId = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("cartId");
+  }
+  return null;
+};
+
+const setLocalCartId = (id) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("cartId", id);
+  }
+};
 
 const ProductDetails = ({ product, isQuickView = false }) => {
+  const variant = useSelector((store) => store.cartStore.selectedVariant);
+
   const dispatch = useDispatch();
   const router = useRouter();
   const [activeThumb, setActiveThumb] = useState();
@@ -48,18 +59,19 @@ const ProductDetails = ({ product, isQuickView = false }) => {
   const [isAddedIntoCard, setIsAddedIntoCard] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedWeights, setSelectedWeights] = useState(
-    product?.variants?.[0]?.weight[0]
+
+  const [mrp, setMrp] = useState(variant.mrp);
+  const [sellingPrice, setSellingPrice] = useState(variant.sellingPrice);
+  const [discountPercentage, setDiscountPercentage] = useState(
+    variant.discountPercentage
   );
-  const [selectedFlavours, setSelectedFlavours] = useState(
-    product?.variants?.[0]?.flavour[0]
-  );
-  const [selectedCreams, setSelectedCreams] = useState(
-    product?.variants?.[0]?.cream[0]
-  );
-  const [selectedDietarys, setSelectedDietarys] = useState(
-    product?.variants?.[0]?.dietary[0]
-  );
+  const [selectedWeights, setSelectedWeights] = useState(variant?.weight);
+  const [selectedFlavours, setSelectedFlavours] = useState(variant?.flavour);
+  const [selectedCreams, setSelectedCreams] = useState(variant?.cream);
+  const [selectedDietarys, setSelectedDietarys] = useState(variant.dietary);
+  const [updateLoading, setUpdateLoading] = useState(false);
+
+  let currentCartId = getLocalCartId();
 
   const searchParams = new URLSearchParams({
     weight: selectedWeights,
@@ -100,6 +112,12 @@ const ProductDetails = ({ product, isQuickView = false }) => {
   //   fetchProductVariant();
   // }, [selectedWeights, selectedFlavours, selectedCreams, selectedDietarys]);
 
+  // useEffect(() => {
+  //   if (productVariant) {
+  //     setSellingPrice(productVariant?.sellingPrice);
+  //   }
+  // }, [productVariant]);
+
   useEffect(() => {
     setActiveThumb(product.media[0].secure_url);
   }, []);
@@ -122,6 +140,14 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     }
   }, [productVariant, existingProduct]);
 
+  useEffect(() => {
+    if (productVariant) {
+      setMrp(productVariant?.mrp);
+      setSellingPrice(productVariant.sellingPrice);
+      setDiscountPercentage(productVariant.discountPercentage);
+    }
+  }, [productVariant]);
+
   const handleThumb = (thumbUrl) => {
     setActiveThumb(thumbUrl);
   };
@@ -140,30 +166,78 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     setSelectedDietarys(value);
   };
 
-  const handleAddToCard = () => {
+  const handleAddToCard = async () => {
+    if (!productVariant || !productVariant._id) {
+      showToast(
+        "error",
+        "Please select a valid option (Weight/Flavour) first."
+      );
+      return;
+    }
+
+    const weight = productVariant?.weight;
+    const flavour = productVariant?.flavour;
+    const cream = productVariant?.cream;
+    const dietary = productVariant?.dietary;
+
+    console.log(weight);
     const cardProduct = {
       productId: product._id,
       variantId: productVariant?._id,
       name: product.name,
       url: product.slug,
-      weight: productVariant?.weight,
-      flavour: productVariant?.flavour,
-      cream: productVariant?.cream,
-      dietary: productVariant?.dietary,
+      weight: weight,
+      flavour: flavour,
+      cream: cream,
+      dietary: dietary,
       mrp: productVariant?.mrp,
       sellingPrice: productVariant?.sellingPrice,
       media: product?.media[0]?.secure_url,
       quantity: 1,
     };
+
+    const productData = {
+      productId: product?._id,
+      variantId: productVariant?._id,
+      quantity: 1,
+      cartId: currentCartId ? currentCartId : null,
+    };
     dispatch(addProductToCart(cardProduct));
+
+    // setUpdateLoading(true);
+    setLoading(true);
+    setIsAddedIntoCard(true);
+    const { data: response } = await axios.post(
+      "/api/cart/addToCart",
+      productData
+    );
+
+    if (!response.success) {
+      throw new Error(response.message);
+    }
+
+    if (response.data && response.data.cartId) {
+      setLocalCartId(response.data.cartId);
+    }
+
+    // setUpdateLoading(false);
+    setLoading(false);
     setIsAddedIntoCard(true);
 
     showToast("success", "product added into card");
     router.push(WEBSITE_CART);
   };
 
+  const safeDescription = DOMPurify.sanitize(product?.description || "");
+
+  if (prodactVariantLoading)
+    return (
+      <div className="flex justify-center items-center">
+        <Loadings />
+      </div>
+    );
   return (
-    <div className={`${!isQuickView ? "lg:px-40" : "lg:px-4"} px-4`}>
+    <div className={`${!isQuickView ? "lg:px-0" : "lg:px-4"} px-4`}>
       {!isQuickView && (
         <div className="my-6 px-8">
           <Breadcrumb>
@@ -229,15 +303,17 @@ const ProductDetails = ({ product, isQuickView = false }) => {
 
           {!prodactVariantLoading ? (
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xl font-semibold">
-                {productVariant?.sellingPrice.toLocaleString("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                })}
-              </span>
-              {productVariant?.discountPercentage > 0 ? (
+              {sellingPrice > 0 && (
+                <span className="text-xl font-semibold">
+                  {sellingPrice.toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                  })}
+                </span>
+              )}
+              {discountPercentage > 0 ? (
                 <span className="text-sm line-through text-gray-500">
-                  {productVariant?.mrp.toLocaleString("en-IN", {
+                  {mrp.toLocaleString("en-IN", {
                     style: "currency",
                     currency: "INR",
                   })}
@@ -245,9 +321,9 @@ const ProductDetails = ({ product, isQuickView = false }) => {
               ) : (
                 ""
               )}
-              {productVariant?.discountPercentage > 0 ? (
+              {discountPercentage > 0 ? (
                 <span className="bg-red-500 rounded-2xl px-3 py-1 text-xs ms-5 font-semibold">
-                  {productVariant?.discountPercentage}%
+                  {discountPercentage}%
                 </span>
               ) : (
                 ""
@@ -259,7 +335,10 @@ const ProductDetails = ({ product, isQuickView = false }) => {
 
           <div
             className="line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: decode(product?.description) }}
+            dangerouslySetInnerHTML={{
+              // __html: decode(product?.description || ""),
+              __html: safeDescription,
+            }}
           ></div>
           <div className="mt-6">
             <h1 className="text-2xl font-semibold">Select Weight</h1>
@@ -348,28 +427,24 @@ const ProductDetails = ({ product, isQuickView = false }) => {
                 className="flex justify-between gap-4"
                 onClick={handleAddToCard}
               >
-                {/* {loading && <Loader2Icon className="animate-spin" />} */}
-                {!isAddedIntoCard && "Add to Card"}
+                {loading && <Loader2Icon className="animate-spin" />}
+                {(loading || !isAddedIntoCard) && "Add to Card"}
               </div>
-              {isAddedIntoCard && (
+              {isAddedIntoCard && !loading && (
                 <AddToCard
                   quantity={quantity || existingProduct?.quantity}
                   setQuantity={setQuantity}
                   productId={product?._id}
                   productVariantId={productVariant?._id}
+                  setUpdateLoading={setUpdateLoading}
+                  updateLoading={updateLoading}
+                  isDiffLoading={true}
                 />
               )}
             </div>
           </div>
         </div>
       </div>
-      {!isQuickView && (
-        <div>
-          <CoreInfo />
-          <SimilarProducts product={product} />
-          <ProductReview productId={product._id} />
-        </div>
-      )}
     </div>
   );
 };

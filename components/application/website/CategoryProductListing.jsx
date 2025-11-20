@@ -20,6 +20,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import Card from "./shared/Card";
 import ButtonLoading from "../ButtonLoading";
 import Loadings from "../Loadings";
+import { useSelector } from "react-redux";
 
 // Helper function to get items from sessionStorage
 const getInitialState = (key, defaultValue) => {
@@ -51,6 +52,8 @@ const CategoryProductListing = ({ categoryData }) => {
   const [selectedDietarys, setSelectedDietarys] = useState(() =>
     getInitialState("filterDietarys", [])
   );
+
+  const cartProduct = useSelector((state) => state.cartStore.products);
 
   const searchParams = {
     weight: selectedWeights,
@@ -92,9 +95,106 @@ const CategoryProductListing = ({ categoryData }) => {
       },
     });
 
-  console.log(data);
+  console.log(cartProduct);
 
   const productLength = data?.pages?.[0]?.totalProducts;
+
+  // const cartVariantIds = cartProduct?.map((item) => item.variantId) || [];
+
+  // // Flatten all pages and remove only the variants that are in the cart
+  // const newProducts = data?.pages?.flatMap((page) =>
+  //   page?.products?.map((product) => ({
+  //     ...product,
+  //     variants: product?.variants?.filter(
+  //       (variant) => !cartVariantIds.includes(variant?._id)
+  //     ),
+  //   }))
+  // );
+
+  // const cartVariantIds = cartProduct?.map((item) => item.variantId) || [];
+
+  // const newProducts = data?.pages?.flatMap((page) =>
+  //   page?.products
+  //     ?.map((product) => {
+  //       const filteredVariants = product?.variants?.filter(
+  //         (variant) => !cartVariantIds.includes(String(variant?._id))
+  //       );
+
+  //       return {
+  //         ...product,
+  //         variants: filteredVariants || [],
+  //       };
+  //     })
+  //     // Optional: remove products that end up with zero variants
+  //     ?.filter((product) => product?.variants?.length > 0)
+  // );
+
+  const cartItems = cartProduct || [];
+
+  // const newProducts = data?.pages?.flatMap((page) =>
+  //   page?.products?.map((product) => {
+  //     // Find all variants in cart that belong to this product
+  //     const productCartVariants = cartItems
+  //       .filter((item) => item.productId === product._id)
+  //       .map((item) => item.variantId);
+
+  //     // Filter out only the variants that match those IDs
+  //     let filteredVariants = [];
+  //     if (product?.variants.length > 1) {
+  //       // filteredVariants = product?.variants.isDefaultVariant;
+  //       filteredVariants = product?.variants?.filter(
+  //         (variant) => !productCartVariants.includes(variant?._id)
+  //       );
+  //     } else {
+  //       filteredVariants = product?.variants?.filter((variant) =>
+  //         productCartVariants.includes(variant?._id)
+  //       );
+  //     }
+
+  //     return {
+  //       ...product,
+  //       variants: filteredVariants,
+  //     };
+  //   })
+  // );
+
+  const newProducts = data?.pages?.flatMap(
+    (page) =>
+      page?.products?.map((product) => {
+        const originalVariants = product?.variants || [];
+
+        // Get all variant IDs for this product that are in the cart
+        const productCartVariantIds = cartItems
+          .filter((item) => item.productId === product._id)
+          .map((item) => item.variantId);
+
+        // Get all variants that are NOT in the cart
+        const variantsNotInCart = originalVariants.filter(
+          (variant) => !productCartVariantIds.includes(variant?._id)
+        );
+
+        let finalVariants = [];
+
+        if (variantsNotInCart.length > 0) {
+          // Case 1: We have variants not in the cart. Use them.
+          finalVariants = variantsNotInCart;
+        } else if (originalVariants.length > 0) {
+          // Case 2: All variants are in the cart (or the list was empty).
+          // As you requested, keep the last variant as a fallback.
+          finalVariants = [originalVariants[originalVariants.length - 1]];
+        }
+        // Case 3: originalVariants was empty, so finalVariants remains [].
+
+        return {
+          ...product,
+          variants: finalVariants,
+        };
+      })
+    // Optional: You might want to filter out products that end up
+    // with no variants, though my logic ensures at least one.
+    // .filter((product) => product.variants.length > 0)
+  );
+  console.log(newProducts);
 
   return (
     <div className="md:flex px-4 md:px-40 pt-10 md:pt-15">
@@ -159,12 +259,15 @@ const CategoryProductListing = ({ categoryData }) => {
           <div className="p-3 font-semibold text-center">{error.message}.</div>
         )}
         <div className="grid lg:grid-cols-3 grid-cols-2 lg:gap-6 gap-5 mt-6">
-          {data &&
+          {/* {data &&
             data?.pages?.map((page) =>
               page?.products?.map((prods) => (
                 <Card key={prods._id} product={prods} />
               ))
-            )}
+            )} */}
+          {newProducts?.map((prods) => (
+            <Card key={prods._id} product={prods} />
+          ))}
         </div>
         <div className="flex justify-center mt-10">
           {hasNextPage ? (

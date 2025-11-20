@@ -15,3 +15,5 @@ export const PRODUCT_DETAILS = (slug) =>
 
 // Cart route
 export const WEBSITE_CART = "/cart";
+
+export const WEBSITE_CHECKOUT = "/checkout";

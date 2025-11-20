@@ -91,7 +91,7 @@ const AddProductVariant = () => {
     defaultValues: {
       product: "",
       isDefaultVariant: false,
-      weight: [],
+      weight: "",
 
       cream: "",
       flavour: "",
@@ -216,7 +216,7 @@ const AddProductVariant = () => {
                             options={weightsData}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -240,7 +240,7 @@ const AddProductVariant = () => {
                             options={creams}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -263,7 +263,7 @@ const AddProductVariant = () => {
                             options={flavours}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 
@@ -286,7 +286,7 @@ const AddProductVariant = () => {
                             options={dietarys}
                             selected={field.value}
                             setSelected={field.onChange}
-                            isMulti={true}
+                            isMulti={false}
                           />
                         </FormControl>
 

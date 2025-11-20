@@ -13,7 +13,9 @@ export const GET = async (request) => {
     const flavour = searchParams.get("flavour");
     const cream = searchParams.get("cream");
     const dietary = searchParams.get("dietary");
-    const mrp = searchParams.get("mrp") || 0;
+    const sellingPrice = searchParams.get("sellingPrice") || 0;
+
+    console.log(weight, flavour, cream, dietary);
 
     const matchStage = { deletedAt: null };
 
@@ -38,56 +40,12 @@ export const GET = async (request) => {
         },
       },
 
-      // Compute distinct fields from variants
       {
         $addFields: {
-          weights: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.weight",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-            ],
-          },
-          flavours: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.flavour",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-            ],
-          },
-          creams: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.cream",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-              [],
-            ],
-          },
-
-          dietarys: {
-            $setUnion: [
-              {
-                $reduce: {
-                  input: "$variants.dietary",
-                  initialValue: [],
-                  in: { $setUnion: ["$$value", "$$this"] },
-                },
-              },
-              [],
-            ],
-          },
+          weights: { $setUnion: "$variants.weight" },
+          flavours: { $setUnion: "$variants.flavour" },
+          creams: { $setUnion: "$variants.cream" },
+          dietarys: { $setUnion: "$variants.dietary" },
         },
       },
 
@@ -100,68 +58,53 @@ export const GET = async (request) => {
               cond: {
                 $and: [
                   { $eq: ["$$variant.deletedAt", null] },
-                  { $eq: ["$$variant.isDefaultVariant", true] },
-                  { $gte: ["$$variant.mrp", parseFloat(mrp - 300)] },
-                  { $lte: ["$$variant.mrp", parseFloat(mrp + 500)] },
+                  // { $eq: ["$$variant.isDefaultVariant", true] },
+                  {
+                    $gte: [
+                      "$$variant.sellingPrice",
+                      parseFloat(sellingPrice - 300),
+                    ],
+                  },
+                  {
+                    $lte: [
+                      "$$variant.sellingPrice",
+                      parseFloat(sellingPrice + 500),
+                    ],
+                  },
 
-                  // --- CORRECTED LOGIC ---
-                  // We check if the param exists AND is not an empty string
-
-                  weight && weight.length > 0 // Check for non-empty string
+                  weight
                     ? {
-                        $anyElementTrue: {
-                          $map: {
-                            input: weight.split(","),
-                            as: "w",
-                            in: {
-                              $in: [{ $toInt: "$$w" }, "$$variant.weight"],
-                            },
-                          },
-                        },
+                        $in: [
+                          { $toString: "$$variant.weight" },
+                          weight.split(","),
+                        ],
                       }
-                    : { $literal: true }, // <-- FIX: Use true to ignore filter
+                    : { $literal: true },
 
-                  flavour && flavour.length > 0
+                  flavour
                     ? {
-                        $anyElementTrue: {
-                          $map: {
-                            input: flavour.split(","),
-                            as: "f",
-                            in: { $in: ["$$f", "$$variant.flavour"] },
-                          },
-                        },
+                        $in: ["$$variant.flavour", flavour.split(",")],
                       }
-                    : { $literal: true }, // <-- FIX: Use true to ignore filter
+                    : { $literal: true },
 
-                  cream && cream.length > 0
-                    ? {
-                        $anyElementTrue: {
-                          $map: {
-                            input: cream.split(","),
-                            as: "c",
-                            in: { $in: ["$$c", "$$variant.cream"] },
-                          },
-                        },
-                      }
-                    : { $literal: true }, // <-- FIX: Use true to ignore filter
+                  // cream
+                  //   ? {
+                  //       $in: ["$$variant.cream", cream.split(",")],
+                  //     }
+                  //   : { $literal: true },
 
-                  dietary && dietary.length > 0
-                    ? {
-                        $anyElementTrue: {
-                          $map: {
-                            input: dietary.split(","),
-                            as: "d",
-                            in: { $in: ["$$d", "$$variant.dietary"] },
-                          },
-                        },
-                      }
-                    : { $literal: true }, // <-- FIX: Use true to ignore filter
+                  // dietary
+                  //   ? {
+                  //       $in: ["$$variant.dietry", dietary.split(",")],
+                  //     }
+                  //   : { $literal: true },
                 ],
               },
             },
           },
         },
       },
+
       {
         $match: {
           variants: { $ne: [] },
@@ -189,6 +132,7 @@ export const GET = async (request) => {
           creams: 1,
           dietarys: 1,
           variants: {
+            _id: 1,
             weight: 1,
             flavour: 1,
             cream: 1,
