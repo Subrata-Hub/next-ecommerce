@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoStar } from "react-icons/io5";
 import ButtonLoading from "../ButtonLoading";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Rating } from "@mui/material";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
@@ -26,8 +26,10 @@ import { showToast } from "@/lib/showToast";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import ReviewList from "./ReviewList";
 import useFetch from "@/hooks/useFetch";
+import { setLoginPopup } from "@/store/slices/authSlice";
 
 const ProductReview = ({ productId }) => {
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const auth = useSelector((store) => store.authStore.auth);
   const [loading, setLoading] = useState(false);
@@ -115,6 +117,14 @@ const ProductReview = ({ productId }) => {
       },
     });
 
+  const handleReview = () => {
+    if (!auth) {
+      dispatch(setLoginPopup(true));
+    }
+
+    setIsReview(!isReview);
+  };
+
   console.log(data);
   return (
     <div className="shadow rounded border my-20 ml-8">
@@ -161,17 +171,17 @@ const ProductReview = ({ productId }) => {
               type="button"
               variant="outline"
               className="md:w-fit w-full py-6 px-10"
-              onClick={() => setIsReview(!isReview)}
+              onClick={handleReview}
             >
               Write Review
             </Button>
           </div>
         </div>
-        {isReview && (
+        {isReview && auth && (
           <div className="p-5">
             <hr className="mb-5" />
             <h4 className="text-xl font-semibold mb-3">Write A Review</h4>
-            {!auth ? (
+            {/* {!auth ? (
               <>
                 <p className="mt-2">Login to submit review</p>
                 <Button type="button" asChild>
@@ -181,80 +191,78 @@ const ProductReview = ({ productId }) => {
                 </Button>
               </>
             ) : (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleReviewSubmit)}>
-                  <div className="mb-5">
-                    <FormField
-                      control={form.control}
-                      name="rating"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Rating
-                              value={field.value}
-                              size="large"
-                              {...field}
-                            />
-                          </FormControl>
+            
+            )} */}
 
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleReviewSubmit)}>
+                <div className="mb-5">
+                  <FormField
+                    control={form.control}
+                    name="rating"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Rating value={field.value} size="large" {...field} />
+                        </FormControl>
 
-                  <div className="mb-5">
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Enter Review Title"
-                              {...field}
-                            />
-                          </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                <div className="mb-5">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter Review Title"
+                            {...field}
+                          />
+                        </FormControl>
 
-                  <div className="mb-5">
-                    <FormField
-                      control={form.control}
-                      name="review"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Review</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="write your comment here"
-                              {...field}
-                            />
-                          </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                <div className="mb-5">
+                  <FormField
+                    control={form.control}
+                    name="review"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Review</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="write your comment here"
+                            {...field}
+                          />
+                        </FormControl>
 
-                  <div>
-                    <ButtonLoading
-                      type="submit"
-                      text="Submit Review"
-                      className="cursor-pointer"
-                      loading={loading}
-                    />
-                  </div>
-                </form>
-              </Form>
-            )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <ButtonLoading
+                    type="submit"
+                    text="Submit Review"
+                    className="cursor-pointer"
+                    loading={loading}
+                  />
+                </div>
+              </form>
+            </Form>
           </div>
         )}
 
@@ -276,7 +284,7 @@ const ProductReview = ({ productId }) => {
                 text="Load More"
                 type="button"
                 loading={isFetching}
-                onclick={fetchNextPage}
+                onClick={fetchNextPage}
               />
             )}
           </div>

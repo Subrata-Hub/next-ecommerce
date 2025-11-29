@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 
-const useFetch = (url, method = "GET", options = {}) => {
+const useFetch = (url, method = "GET", options = {}, enabled = true) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,6 +19,11 @@ const useFetch = (url, method = "GET", options = {}) => {
   }, [method, optionsString]);
 
   useEffect(() => {
+    // 🚀 If disabled → DO NOT FETCH
+    if (!enabled || !url) {
+      return;
+    }
+
     const apicall = async () => {
       setLoading(true);
       setError(null);
@@ -36,14 +41,14 @@ const useFetch = (url, method = "GET", options = {}) => {
 
         setData(response);
       } catch (error) {
-        setError(error.message);
+        setError(error?.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
     };
 
     apicall();
-  }, [url, refreshIndex, requestOptions]);
+  }, [url, refreshIndex, requestOptions, enabled]);
 
   const refetch = () => {
     setRefreshIndex((prev) => prev + 1);

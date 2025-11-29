@@ -7,7 +7,6 @@ export const GET = async (request, { params }) => {
     await connectDB();
 
     const { slug } = await params;
-    console.log(slug);
 
     // Find category by name
     const getCategory = await CategoryModel.findOne({
@@ -15,13 +14,11 @@ export const GET = async (request, { params }) => {
       deletedAt: null,
     }).lean();
 
-    console.log(getCategory);
-
     if (!getCategory) {
       return response(false, 404, "Category not found");
     }
 
-    return response(true, 200, "Products for this category found", getCategory);
+    return response(true, 200, "category found", getCategory);
   } catch (error) {
     return catchError(error);
   }

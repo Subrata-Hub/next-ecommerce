@@ -51,7 +51,7 @@ const setLocalCartId = (id) => {
 
 const ProductDetails = ({ product, isQuickView = false }) => {
   const variant = useSelector((store) => store.cartStore.selectedVariant);
-
+  const auth = useSelector((state) => state.authStore.auth);
   const dispatch = useDispatch();
   const router = useRouter();
   const [activeThumb, setActiveThumb] = useState();
@@ -180,8 +180,11 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     const cream = productVariant?.cream;
     const dietary = productVariant?.dietary;
 
+    const userId = auth !== null ? auth._id : auth;
+
     console.log(weight);
     const cardProduct = {
+      // userId: userId,
       productId: product._id,
       variantId: productVariant?._id,
       name: product.name,
@@ -197,10 +200,13 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     };
 
     const productData = {
+      userId: userId,
       productId: product?._id,
       variantId: productVariant?._id,
       quantity: 1,
       cartId: currentCartId ? currentCartId : null,
+      distance: 0,
+      delivery_fee: 0,
     };
     dispatch(addProductToCart(cardProduct));
 

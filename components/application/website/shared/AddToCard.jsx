@@ -10,7 +10,7 @@ import { Loader2Icon } from "lucide-react";
 import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { FiMinus } from "react-icons/fi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddToCard = ({
   quantity,
@@ -22,9 +22,11 @@ const AddToCard = ({
   isDiffLoading = false,
 }) => {
   const dispatch = useDispatch();
+  const auth = useSelector((state) => state.authStore.auth);
 
   const handleAddToCardClick = async (actionType) => {
     let currentCartId = getLocalCartId();
+    const userId = auth !== null ? auth._id : auth;
 
     // 1. Determine quantity to send (+1 or -1)
     const quantityToSend = actionType === "add" ? 1 : -1;
@@ -34,6 +36,7 @@ const AddToCard = ({
       variantId: productVariantId,
       quantity: quantityToSend, // This is +1 or -1
       cartId: currentCartId ? currentCartId : null,
+      userId: userId,
     };
 
     // --- Start: Optimistic UI & Redux Update ---

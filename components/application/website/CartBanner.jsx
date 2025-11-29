@@ -13,7 +13,7 @@ const CartBanner = () => {
         height={150}
         className="w-full h-full object-center object-cover"
       />
-      <div className="absolute top-[30%] left-[45%] z-100000">
+      <div className="absolute top-[30%] left-[45%] z-10">
         <h1 className="text-4xl font-bold">Cart</h1>
         <div className="text-sm">
           <ul className="flex gap-2 mt-2">

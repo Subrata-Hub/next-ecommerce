@@ -38,31 +38,47 @@ export const POST = async (request) => {
     }
 
     const loggedinuserData = {
-      _id: getUser._id,
+      _id: getUser._id.toString(),
       role: getUser.role,
       name: getUser.name,
       avater: getUser.avater,
     };
 
     const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = await new SignJWT(loggedinuserData)
+    // const token = await new SignJWT(loggedinuserData)
+    //   .setIssuedAt()
+    //   .setExpirationTime("5min")
+    //   .setProtectedHeader({ alg: "HS256" })
+    //   .sign(secret);
+
+    const token = await new SignJWT({
+      userId: getUser._id.toString(),
+      role: getUser.role,
+    })
       .setIssuedAt()
-      .setExpirationTime("24h")
+      .setExpirationTime("7d")
       .setProtectedHeader({ alg: "HS256" })
       .sign(secret);
 
     const cookieStore = await cookies();
+
+    const oneDay = 24 * 60 * 60;
+    const sevenDays = 7 * oneDay;
+
     cookieStore.set({
       name: "access_token",
       value: token,
       httpOnly: process.env.NODE_ENV === "production",
       path: "/",
       secure: process.env.NODE_ENV === "production",
+      // secure: false,
       sameSite: "lax",
+      maxAge: sevenDays,
     });
 
     // remove OTP after validation
     await getOtpData.deleteOne();
+
     return response(true, 200, "login successfull", loggedinuserData);
   } catch (error) {
     return catchError(error);

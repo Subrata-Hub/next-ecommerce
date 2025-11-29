@@ -20,7 +20,12 @@ export const POST = async (request) => {
       })
       .extend({
         cartId: z.string().optional().nullable(),
-        // removeAll: z.boolean(),
+        userId: z.string().optional().nullable(),
+        distance: z.number().min(0, "Distance cannot be negative").optional(),
+        delivery_fee: z
+          .number()
+          .min(0, "Delivery fee cannot be negative")
+          .optional(),
       });
 
     const payload = await request.json();
@@ -133,9 +138,22 @@ export const POST = async (request) => {
       0
     );
     cart.total = cart.cartItems.reduce((acc, item) => acc + item.itemTotal, 0);
+    cart.userId = data.userId;
+    // cart.distance = data.distance;
+    // cart.delivery_fee = data.delivery_fee;
+
+    if (data.distance !== undefined) {
+      cart.distance = data.distance;
+    }
+
+    if (data.delivery_fee !== undefined) {
+      cart.delivery_fee = data.delivery_fee;
+    }
 
     // 7. Save and Return Response
     const newCartData = await cart.save();
+
+    console.log(newCartData);
 
     // IMPORTANT: Return an object with cartId so frontend can find it
     return response(true, 200, "Cart updated successfully", {

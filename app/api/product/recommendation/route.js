@@ -15,8 +15,6 @@ export const GET = async (request) => {
     const dietary = searchParams.get("dietary");
     const sellingPrice = searchParams.get("sellingPrice") || 0;
 
-    console.log(weight, flavour, cream, dietary);
-
     const matchStage = { deletedAt: null };
 
     const getAllProducts = await ProductModel.aggregate([

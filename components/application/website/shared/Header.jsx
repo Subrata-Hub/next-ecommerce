@@ -5,6 +5,7 @@ import { RiShoppingBag4Line } from "react-icons/ri";
 import { MdFavoriteBorder } from "react-icons/md";
 import { FaRegUser } from "react-icons/fa";
 import ShoppingCard from "./ShoppingCard";
+import Profile from "../Profile";
 
 const Header = () => {
   return (
@@ -16,7 +17,8 @@ const Header = () => {
         <ShoppingCard />
 
         <MdFavoriteBorder className="text-2xl" />
-        <FaRegUser className="text-2xl" />
+
+        <Profile />
       </div>
     </div>
   );

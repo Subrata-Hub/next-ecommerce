@@ -30,10 +30,15 @@ import {
 import ButtonLoading from "@/components/application/ButtonLoading";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
+
 import { showToast } from "@/lib/showToast";
 import { getLocalCartId, setLocalCartId } from "@/lib/helperFunction";
 import Loadings from "@/components/application/Loadings";
 import UpdateLoading from "@/components/application/website/UpdateLoading";
+import { setLoginPopup, setPostLoginRedirect } from "@/store/slices/authSlice";
+import AddressModal from "@/components/application/website/shared/AddressModal";
+import { setShowAddressForm } from "@/store/slices/settingSlice";
+import useFetch from "@/hooks/useFetch";
 
 const cartPage = () => {
   const dispatch = useDispatch();
@@ -41,12 +46,28 @@ const cartPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkoutBtnLoading, setCheckoutBtnLoading] = useState(false);
   const [itemTotal, setItemTotal] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
+
   const cartStore = useSelector((state) => state.cartStore);
   const count = cartStore.count;
   const products = cartStore.products;
+  const loginPopup = useSelector((state) => state.authStore.loginPopup);
+  const auth = useSelector((state) => state.authStore.auth);
+  const showAddressForm = useSelector(
+    (state) => state.settingStore.showAddressForm
+  );
+
+  // const { data: getAddress } = useFetch(`/api/address/getAddress`);
+
+  const { data: address, loading: addressLoading } = useFetch(
+    "/api/address/getAddress",
+    "GET",
+    {},
+    !!auth // ⭐ only run when auth exists
+  );
 
   const currentCartId = getLocalCartId();
   const formSchema = credentialsSchema.pick({
@@ -193,6 +214,57 @@ const cartPage = () => {
       showToast("error", error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (addressLoading) {
+  //     // showToast("error", "Please wait, loading your details...");
+  //     return;
+  //   }
+  //   const updateCart = async () => {
+  //     if (address?.data?.length > 0) {
+  //       const addressId = address?.data?.[0]?._id;
+  //       setCheckoutBtnLoading(true);
+  //       try {
+  //         const { data: getCart } = await axios.post(`/api/cart/update`, {
+  //           cartId: currentCartId,
+  //           addressId: addressId,
+  //         });
+
+  //         if (!getCart.success) {
+  //           throw new Error(getCart.message);
+  //         }
+
+  //         setCheckoutBtnLoading(false);
+
+  //         // navigate.push(WEBSITE_CHECKOUT);
+  //         dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
+  //       } catch (error) {
+  //         showToast("error", error.message);
+  //       } finally {
+  //         setCheckoutBtnLoading(false);
+  //       }
+  //     } else {
+  //       return;
+  //     }
+  //   };
+
+  //   updateCart();
+  // }, [currentCartId, address?.data?.[0], auth]);
+
+  const goToCheckout = async () => {
+    if (addressLoading) {
+      // showToast("error", "Please wait, loading your details...");
+      return;
+    }
+    if (!auth) {
+      dispatch(setLoginPopup(true));
+    } else if (!address || address.data.length === 0) {
+      dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
+      dispatch(setShowAddressForm(true));
+    } else {
+      navigate.push(WEBSITE_CHECKOUT);
     }
   };
 
@@ -425,11 +497,21 @@ const cartPage = () => {
                     </tbody>
                   </table>
                   <div className="flex flex-col gap-y-4 mt-4">
-                    <Button type="button" asChild>
-                      <Link href={WEBSITE_CHECKOUT} className="">
+                    {/* <Button type="button" asChild >
+                      <Link href={WEBSITE_CHECKOUT} className="" >
                         Checkout
                       </Link>
-                    </Button>
+                     
+                    </Button> */}
+
+                    <ButtonLoading
+                      type="text"
+                      text="Checkout"
+                      onClick={goToCheckout}
+                      className="w-full border py-2"
+                      loading={addressLoading || checkoutBtnLoading}
+                    />
+
                     <Button type="button" asChild>
                       <Link href={WEBSITE_HOME} className="">
                         Continue to Shopping
@@ -442,6 +524,9 @@ const cartPage = () => {
           </div>
         </>
       )}
+      <div>
+        <AddressModal showAddressForm={showAddressForm} />
+      </div>
     </div>
   );
 };
