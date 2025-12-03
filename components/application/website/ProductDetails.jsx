@@ -205,8 +205,8 @@ const ProductDetails = ({ product, isQuickView = false }) => {
       variantId: productVariant?._id,
       quantity: 1,
       cartId: currentCartId ? currentCartId : null,
-      distance: 0,
-      delivery_fee: 0,
+      // distance: 0,
+      // delivery_fee: 0,
     };
     dispatch(addProductToCart(cardProduct));
 

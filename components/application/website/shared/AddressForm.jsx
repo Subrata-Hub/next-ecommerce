@@ -34,7 +34,12 @@ import { getLocalCartId } from "@/lib/helperFunction";
 
 const access_token = process.env.NEXT_PUBLIC_ACCESS_TOKEN;
 
-const AddressForm = () => {
+const AddressForm = ({
+  setRefetchAddres,
+  setSelectedAddress,
+  setShowSelectedAddress,
+  refetch,
+}) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -221,24 +226,47 @@ const AddressForm = () => {
 
       console.log(response);
 
-      if (!response.success && address.data && address.data.length > 0) {
-        return;
-      } else {
-        const newAddressId = response.data?._id || response.data?.id; // Ensure your API returns the created object
-        const currentCartId = getLocalCartId();
+      // if (address.data && address.data.length > 0) {
+      //   setRefetchAddres(true);
+      //   router.push(WEBSITE_CHECKOUT);
+      // } else {
+      //   const newAddressId = response.data?._id || response.data?.id; // Ensure your API returns the created object
+      //   const currentCartId = getLocalCartId();
 
-        if (newAddressId && currentCartId) {
-          try {
-            await axios.post(`/api/cart/update`, {
-              cartId: currentCartId,
-              addressId: newAddressId,
-            });
+      //   if (newAddressId && currentCartId) {
+      //     try {
+      //       await axios.post(`/api/cart/update`, {
+      //         cartId: currentCartId,
+      //         addressId: newAddressId,
+      //       });
 
-            // dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
-          } catch (cartError) {
-            console.error("Background cart update failed:", cartError);
-            // Optional: You might want to throw here if cart update is mandatory
-          }
+      //       // dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
+      //     } catch (cartError) {
+      //       console.error("Background cart update failed:", cartError);
+      //       // Optional: You might want to throw here if cart update is mandatory
+      //     }
+      //   }
+      // }
+
+      const newAddressId = response.data?._id || response.data?.id; // Ensure your API returns the created object
+      const currentCartId = getLocalCartId();
+
+      if (response.success && newAddressId && currentCartId) {
+        try {
+          await axios.post(`/api/cart/update`, {
+            cartId: currentCartId,
+            addressId: newAddressId,
+          });
+
+          setSelectedAddress(response.data);
+          setShowSelectedAddress(true);
+          refetch();
+          setRefetchAddres(true);
+
+          // dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
+        } catch (cartError) {
+          console.error("Background cart update failed:", cartError);
+          // Optional: You might want to throw here if cart update is mandatory
         }
       }
 
@@ -283,7 +311,7 @@ const AddressForm = () => {
               name="addressType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address Label</FormLabel>
+                  <FormLabel>Address Type</FormLabel>
                   <FormControl>
                     <Select
                       options={addressTtpes}

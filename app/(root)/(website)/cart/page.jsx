@@ -260,6 +260,7 @@ const cartPage = () => {
     }
     if (!auth) {
       dispatch(setLoginPopup(true));
+      dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
     } else if (!address || address.data.length === 0) {
       dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
       dispatch(setShowAddressForm(true));

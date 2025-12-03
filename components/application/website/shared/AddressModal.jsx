@@ -10,7 +10,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddressForm from "./AddressForm";
 
-const AddressModal = ({ showAddressForm }) => {
+const AddressModal = ({
+  showAddressForm,
+  setRefetchAddres,
+  setSelectedAddress,
+  setShowSelectedAddress,
+  refetch,
+}) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.authStore.auth);
 
@@ -31,7 +37,12 @@ const AddressModal = ({ showAddressForm }) => {
               <DialogDescription className="hidden"></DialogDescription>
             </DialogHeader>
             <div className="h-[calc(100%-10px)] py-2">
-              <AddressForm />
+              <AddressForm
+                setRefetchAddres={setRefetchAddres}
+                setSelectedAddress={setSelectedAddress}
+                setShowSelectedAddress={setShowSelectedAddress}
+                refetch={refetch}
+              />
             </div>
           </div>
         </DialogContent>
