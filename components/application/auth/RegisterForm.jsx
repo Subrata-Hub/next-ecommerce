@@ -26,7 +26,7 @@ const registerSchema = credentialsSchema
     path: ["confirmPassword"],
   });
 
-export const RegisterForm = ({ onSwitchToLogin }) => {
+export const RegisterForm = ({ onSwitchToLogin, onRegisterFail }) => {
   const [loading, setLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -44,7 +44,12 @@ export const RegisterForm = ({ onSwitchToLogin }) => {
       // Optional: Auto switch to login after register
       // onSwitchToLogin();
     } catch (error) {
-      showToast("error", error.message);
+      // showToast("error", error.message);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      onRegisterFail(errorMessage);
     } finally {
       setLoading(false);
     }

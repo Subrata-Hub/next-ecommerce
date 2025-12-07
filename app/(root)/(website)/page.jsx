@@ -9,7 +9,7 @@ import CuratedCollections from "@/components/application/website/CuratedCollecti
 
 const page = () => {
   return (
-    <div>
+    <div className="w-full">
       <div className="w-full h-[1px] bg-gray-200"></div>
 
       <MainSlider />

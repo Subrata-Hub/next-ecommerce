@@ -27,7 +27,11 @@ const loginSchema = credentialsSchema.pick({ email: true }).extend({
   password: z.string().min(3, "Password is required"),
 });
 
-export const LoginForm = ({ onSwitchToRegister, onLoginSuccess }) => {
+export const LoginForm = ({
+  onSwitchToRegister,
+  onLoginSuccess,
+  onLoginFail,
+}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const form = useForm({
@@ -45,7 +49,12 @@ export const LoginForm = ({ onSwitchToRegister, onLoginSuccess }) => {
       showToast("success", data.message);
       onLoginSuccess(values.email); // Trigger OTP view in parent
     } catch (error) {
-      showToast("error", error.message);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      onLoginFail(errorMessage);
+      // showToast("error", error.message);
     } finally {
       setLoading(false);
     }

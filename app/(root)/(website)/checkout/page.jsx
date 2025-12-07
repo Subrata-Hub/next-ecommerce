@@ -3,7 +3,7 @@ import axios from "axios";
 
 const page = () => {
   return (
-    <div className="lg:px-44 px-4 mt-6">
+    <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 mt-6">
       <Checkout />
     </div>
   );

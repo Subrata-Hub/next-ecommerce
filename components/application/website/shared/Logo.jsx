@@ -8,13 +8,15 @@ const Logo = () => {
   return (
     <div>
       <Link href={WEBSITE_HOME}>
-        <Image
-          src={Logos.src}
-          alt="logo"
-          width={130}
-          height={100}
-          className="w-[130px] h-[100px]"
-        />
+        <div className="w-[70px] md:w-[130px] h-[60px] md:h-[100px]">
+          <Image
+            src={Logos.src}
+            alt="logo"
+            width={130}
+            height={100}
+            className="w-full h-full object-center"
+          />
+        </div>
       </Link>
     </div>
   );

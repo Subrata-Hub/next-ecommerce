@@ -20,24 +20,50 @@ const Sorting = ({
   productLength,
 }) => {
   return (
-    <div className="flex justify-between flex-wrap lg:flex-nowrap">
-      <div className="lg:hidden">
+    <div className="flex flex-col gap-y-5 md:flex-row md:justify-between  flex-wrap lg:flex-nowrap">
+      {/* <div className="lg:hidden">
         <Button
           type="button"
           onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
         >
           <IoFilterOutline /> Filter
         </Button>
-      </div>
+      </div> */}
 
-      <div className="flex items-center gap-2">
+      <div className="flex  items-center gap-2">
         <h1 className="text-3xl font-bold">{categoryData?.name}</h1>
         {productLength && (
           <span className="text-gray-500 font-semibold">{`(${productLength} Items)`}</span>
         )}
       </div>
 
-      <div className="md:w-[200px] bg-white flex justify-center items-center text-nowrap">
+      <div className="flex justify-between gap-4">
+        <div className="lg:hidden">
+          <Button
+            type="button"
+            onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          >
+            <IoFilterOutline /> Filter
+          </Button>
+        </div>
+        <div className="md:w-[200px] bg-white flex justify-center items-center text-nowrap">
+          <div>Sort By:</div>
+          <Select value={sorting} onValueChange={(value) => setSorting(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Default Sorting" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortings?.map((sort) => (
+                <SelectItem key={sort.value} value={sort.value}>
+                  {sort.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* <div className="md:w-[200px] bg-white flex justify-center items-center text-nowrap">
         <div>Sort By:</div>
         <Select value={sorting} onValueChange={(value) => setSorting(value)}>
           <SelectTrigger>
@@ -51,7 +77,7 @@ const Sorting = ({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
     </div>
   );
 };

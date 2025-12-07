@@ -8,6 +8,7 @@ export const USER_DASBOARD = "/my-account";
 
 // Category routes
 export const WEBSITE_CATEGORY = (slug) => (slug ? `/category/${slug}` : "");
+export const WEBSITE_MOBILE_CATEGORIES = "/categories";
 
 // Product routes
 export const PRODUCT_DETAILS = (slug) =>

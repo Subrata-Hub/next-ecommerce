@@ -17,12 +17,12 @@ import FeatureSection from "../FeatureSection";
 
 const Footer = () => {
   return (
-    <div className="px-36 py-20">
-      <div className="pl-6">
+    <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 md:py-20">
+      <div className="lg:pl-6">
         <FeatureSection />
       </div>
       <div className="py-10">
-        <div className="w-full flex">
+        <div className="w-full flex md:flex-row flex-col gap-y-8">
           <div className="md:w-[40%] flex flex-col">
             {/* <div>
             <Logo />
@@ -62,11 +62,11 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="md:w-[60%] flex gap-4">
+          <div className="md:w-[60%] flex gap-15">
             <div className="flex flex-col w-[50%]">
               <h1 className="text-xl font-bold">Know Us</h1>
               <div className="w-full h-[0.5px] bg-gray-500"></div>
-              <div className="flex gap-32">
+              <div className="flex flex-col lg:flex-row lg:gap-20 xl:gap-32">
                 <ul className="py-4 flex flex-col gap-y-5">
                   <li>Home</li>
                   <li>Contact Us</li>
@@ -79,10 +79,10 @@ const Footer = () => {
                 </ul>
               </div>
             </div>
-            <div className="flex flex-col  w-[50%]">
+            <div className="flex flex-col w-[50%]">
               <h1 className="text-xl font-bold">Need Help</h1>
               <div className="w-full h-[0.5px] bg-gray-500"></div>
-              <div className="flex gap-32">
+              <div className="flex flex-col lg:flex-row lg:gap-10 xl:gap-32">
                 <ul className="py-4 flex flex-col gap-y-5">
                   <li>Privacy</li>
                   <li>FAQ’s</li>
@@ -97,15 +97,15 @@ const Footer = () => {
               <div className="flex ">
                 <div className="w-32">
                   <Image src={fassaiLogo} alt="faasi" className="w-full" />
-                  <span className="text-nowrap">
+                  <span className="md:text-nowrap">
                     License No : 10014031001248
                   </span>
                 </div>
                 <div className="flex gap-2 mt-8">
                   <FaInstagram className="text-2xl" />
                   <FaFacebook className="text-2xl" />
-                  <IoLogoLinkedin className="text-2xl" />
-                  <RiTwitterXFill className="text-2xl" />
+                  {/* <IoLogoLinkedin className="text-2xl" />
+                  <RiTwitterXFill className="text-2xl" /> */}
                 </div>
               </div>
             </div>

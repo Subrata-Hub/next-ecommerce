@@ -31,8 +31,10 @@ const AddressCard = ({
     }
   };
 
+  // md:w-[390px] lg:w-full xl:w-[390px]
+
   return (
-    <div className="w-[390px] border p-4 ">
+    <div className="w-full  border p-4 ">
       <div className="px-2">
         <div className="flex gap-2">
           <h1 className="font-medium">{address?.label}</h1>

@@ -9,10 +9,10 @@ import cakeImage from "@/public/assets/images/cake1.png";
 
 const FeatureSection = () => {
   return (
-    <div className="flex justify-between items-center bg-gradient-to-r from-purple-50 to-white p-8 mt-10">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="flex justify-between items-center bg-gradient-to-r from-purple-50 to-white p-2 md:p-6  lg:p-0 md:mt-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-6">
         {/* Fast and Easy Payments */}
-        <div className="bg-white p-6 rounded-xl shadow-md flex items-start space-x-4">
+        <div className=" bg-white p-6  rounded-xl shadow-md flex items-start space-x-4 ">
           <div className="bg-purple-100 p-3 rounded-full">
             <IoMdCash className="text-3xl text-purple-600" />
           </div>
@@ -54,7 +54,7 @@ const FeatureSection = () => {
       </div>
 
       {/* Product Image */}
-      <div className="ml-8">
+      <div className="hidden md:flex lg:hidden xl:flex xl:ml-8">
         <Image src={cakeImage} alt="Princess Cake" className="w-64 h-[200px]" />
       </div>
     </div>

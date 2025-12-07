@@ -197,7 +197,7 @@ const CategoryProductListing = ({ categoryData }) => {
   console.log(newProducts);
 
   return (
-    <div className="md:flex px-4 md:px-40 pt-10 md:pt-15">
+    <div className="md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-15">
       {windowSize.width > 1024 ? (
         <div className="w-72 me-4">
           <div className="">
@@ -217,7 +217,7 @@ const CategoryProductListing = ({ categoryData }) => {
         </div>
       ) : (
         <Sheet open={isMobileOpen} onOpenChange={() => setIsMobileOpen(false)}>
-          <SheetContent side="left" className="block">
+          <SheetContent side="left" className="z-[5000000000000]">
             <SheetHeader>
               <SheetTitle>Filter</SheetTitle>
               <SheetDescription></SheetDescription>

@@ -30,7 +30,7 @@ const page = async ({ params }) => {
     );
 
   return (
-    <div className="lg:px-40">
+    <div className="px-2 md:px-4 lg:px-12 xl:px-15 2xl:px-40 relative">
       <ProductDetails product={product} />
       <CoreInfo />
       <SimilarProducts product={product} />

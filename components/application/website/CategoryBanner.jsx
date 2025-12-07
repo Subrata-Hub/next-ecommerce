@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const CategoryBanner = ({ categoryData }) => {
   return (
-    <div className="w-full h-[300px] relative">
+    <div className="w-full h-[250px] lg:h-[300px] relative">
       <Image
         src="https://res.cloudinary.com/duvvksw0w/image/upload/v1761267165/ecommerce/Frame-1597884148_wtmrvr.webp"
         alt="category-banner"
@@ -14,8 +14,10 @@ const CategoryBanner = ({ categoryData }) => {
         height={300}
         className="w-full h-full object-center object-cover"
       />
-      <div className="absolute top-16 left-40 z-100000">
-        <h1 className="text-4xl font-bold">{categoryData?.name}</h1>
+      <div className="absolute top-[30%] left-[30%] lg:top-16 lg:left-40 z-10">
+        <h1 className="text-3xl md:text-4xl font-bold whitespace-nowrap">
+          {categoryData?.name}
+        </h1>
         <div className="text-sm">
           <ul className="flex gap-2 mt-2">
             <li>

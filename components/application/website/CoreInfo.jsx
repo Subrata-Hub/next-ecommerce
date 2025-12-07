@@ -14,21 +14,21 @@ const CoreInfo = () => {
   };
 
   return (
-    <div className="mb-20 pl-8 h-auto relative">
-      <div className="shadow rounded border p-10 h-auto">
-        <div className="flex gap-10 flex-wrap">
+    <div className="mb-20 pl-0 md:pl-8 h-auto relative">
+      <div className="shadow rounded border p-2 md:p-10 h-auto">
+        <div className="w-full flex gap-2 md:gap-10 md:flex-wrap overflow-x-scroll hide-scrollbar">
           {coreInfo?.map((item, index) => (
-            <React.Fragment key={index}>
+            <div key={index} className="flex-shrink-0">
               <Button
                 type="button"
-                className={`px-6 py-6 rounded-4xl border-2 ${
+                className={`md:px-6 md:py-6 rounded-4xl border-2 ${
                   activeIndex === index ? "border-blue-500" : "border-gray-500"
                 }`}
                 onClick={() => handleShowContent(index)}
               >
                 {item.header}
               </Button>
-            </React.Fragment>
+            </div>
           ))}
         </div>
 

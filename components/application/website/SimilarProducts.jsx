@@ -94,11 +94,11 @@ const SimilarProducts = ({ product }) => {
     <div className=" pl-8">
       <div className="flex flex-col gap-y-4 justify-center items-center">
         <h2 className="text-3xl font-bold">You May Also Like</h2>
-        <p className="text-gray-500">
+        <p className="text-gray-500 text-center">
           Discover our handpicked featured products - quality, style, and value!
         </p>
       </div>
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-8 grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2 gap-3 md:gap-6">
         {getSimilarProducts?.data?.map((prods) => (
           <Card key={prods._id} product={prods} />
         ))}

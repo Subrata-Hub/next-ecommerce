@@ -43,6 +43,7 @@ const Login = () => {
     try {
       setOtpLoading(true);
       const { data } = await axios.post("/api/auth/verify-otp", values);
+      console.log(data);
       if (!data.success) throw new Error(data.message);
 
       showToast("success", data.message);
@@ -89,6 +90,10 @@ const Login = () => {
     setView("OTP");
   };
 
+  const handleErrorMessage = (message) => {
+    showToast("error", message);
+  };
+
   const renderContent = () => {
     switch (view) {
       case "REGISTER":
@@ -100,7 +105,10 @@ const Login = () => {
             <DialogDescription className="text-center">
               Create an account by filling out the form below
             </DialogDescription>
-            <RegisterForm onSwitchToLogin={() => setView("LOGIN")} />
+            <RegisterForm
+              onSwitchToLogin={() => setView("LOGIN")}
+              onRegisterFail={handleErrorMessage}
+            />
           </>
         );
       case "OTP":
@@ -132,6 +140,7 @@ const Login = () => {
             <LoginForm
               onSwitchToRegister={() => setView("REGISTER")}
               onLoginSuccess={handleLoginSuccess}
+              onLoginFail={handleErrorMessage}
             />
           </>
         );

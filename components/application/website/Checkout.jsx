@@ -117,9 +117,9 @@ const Checkout = () => {
     );
 
   return (
-    <div>
+    <div className="lg:pl-10">
       <h2 className="text-3xl font-bold">Checkout</h2>
-      <div className="flex gap-10 mt-4">
+      <div className="lg:flex gap-10 mt-4">
         <div className="lg:w-[70%] w-full">
           <div className="flex justify-between">
             {!showSelectedAddress ? (
@@ -156,7 +156,7 @@ const Checkout = () => {
           </div>
 
           {!showSelectedAddress && (
-            <div className="flex flex-wrap gap-2 mt-4 w-full">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 mt-4">
               {address?.data.map((addr) => (
                 <AddressCard
                   key={addr._id}

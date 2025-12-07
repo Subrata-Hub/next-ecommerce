@@ -30,8 +30,8 @@ const AddressModal = ({
         open={showAddressForm}
         onOpenChange={() => dispatch(setShowAddressForm(false))}
       >
-        <DialogContent className="sm:max-w-[45%] h-screen mt-10 px-6 border-0 shadow-none overflow-visible">
-          <div className="h-[90vh]">
+        <DialogContent className="w-full lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] h-[calc(100%-100px)] px-6 border-0 shadow-none overflow-y-scroll">
+          <div className="">
             <DialogHeader className="h-8 border-b">
               <DialogTitle>Add Address</DialogTitle>
               <DialogDescription className="hidden"></DialogDescription>

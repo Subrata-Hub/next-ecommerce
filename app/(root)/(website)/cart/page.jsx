@@ -273,7 +273,7 @@ const cartPage = () => {
     <div className="">
       <CartBanner />
       {count === 0 ? (
-        <div className="md:flex px-4 md:px-40 pt-20 justify-center items-center">
+        <div className="md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-20 justify-center items-center">
           <div className="text-center">
             <h4 className="text-4xl font-semibold mb-5">Your Cart is Empty</h4>
             <Button type="button" asChild>
@@ -291,7 +291,7 @@ const cartPage = () => {
             )}
           </div>
 
-          <div className="flex lg:flex-nowrap flex-wrap gap-10 my-10 lg:px-44 px-4">
+          <div className="flex lg:flex-nowrap flex-wrap gap-10 my-10 px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40">
             <div className="lg:w-[70%] w-full">
               <table className="w-full border">
                 <thead className="border-b bg-gray-50 md:table-header-group hidden">
@@ -416,7 +416,7 @@ const cartPage = () => {
                 </tbody>
               </table>
 
-              <div className="w-[70%] h-auto border rounded-2xl mt-6 p-8">
+              <div className="w-full lg:w-[70%] h-auto border rounded-2xl mt-6 p-8">
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(handleApplayCoupon)}
