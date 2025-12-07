@@ -55,7 +55,13 @@ const FeatureSection = () => {
 
       {/* Product Image */}
       <div className="hidden md:flex lg:hidden xl:flex xl:ml-8">
-        <Image src={cakeImage} alt="Princess Cake" className="w-64 h-[200px]" />
+        <Image
+          src="https://res.cloudinary.com/duvvksw0w/image/upload/v1761648073/ecommerce/WhatsApp_Image_2025-10-27_at_10.35.04_PM_nl0jxs.webp"
+          width={256}
+          height={200}
+          alt="Princess Cake"
+          className="w-64 h-[200px]"
+        />
       </div>
     </div>
   );
