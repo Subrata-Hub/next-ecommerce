@@ -6,9 +6,21 @@ import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import slugify from "slugify";
 
 const BirthdayProduct = async () => {
-  const { data: getBirthdayProducts } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
-  );
+  let getBirthdayProducts = null;
+
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
+    );
+    getBirthdayProducts = response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn(`birthday product not found.`);
+    } else {
+      console.error("Error fetching birthday products:", error.message);
+    }
+  }
+
   return (
     <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-28">
       <div className="flex justify-between items-center">
@@ -31,7 +43,7 @@ const BirthdayProduct = async () => {
         </div>
       </div>
       <div className="mt-8  grid  lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-3 md:gap-6">
-        {!getBirthdayProducts.success && (
+        {(!getBirthdayProducts || !getBirthdayProducts.data) && (
           <div className="text-center py-5">Product not found</div>
         )}
         {getBirthdayProducts?.data?.map((prods) => (

@@ -8,16 +8,18 @@ const page = async ({ params }) => {
 
   let getCategoryData = null;
 
-  // const { data: getCategoryData } = await axios.get(
-  //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/get-category/${slug}`
-  // );
-
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/get-category/${slug}`
     );
     getCategoryData = response.data;
-  } catch (error) {}
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn(`Category with slug "${slug}" not found.`);
+    } else {
+      console.error("Error fetching category:", error.message);
+    }
+  }
 
   if (!getCategoryData || !getCategoryData.data) {
     return (

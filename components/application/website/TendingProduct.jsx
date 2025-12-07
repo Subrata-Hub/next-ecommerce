@@ -8,12 +8,22 @@ import slugify from "slugify";
 // import useFetch from "@/hooks/useFetch";
 
 const TendingProduct = async () => {
-  // const { data: getAllProducts } = useFetch("/api/category/list/Tranding");
-  const { data: getAllProducts } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
-  );
+  let getAllProducts = null;
 
-  console.log(getAllProducts);
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
+    );
+    getAllProducts = response.data;
+  } catch (error) {
+    // If it's a 404 error, we just ignore it and let categoryData remain null
+    // If it's another error (like 500), you might want to log it
+    if (error.response && error.response.status === 404) {
+      console.warn(`Tranding Product not found.`);
+    } else {
+      console.error("Error fetching Tranding Product :", error.message);
+    }
+  }
 
   return (
     <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-28">
@@ -44,7 +54,7 @@ const TendingProduct = async () => {
         ))}
       </div> */}
       <div className="mt-8 grid  lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-3 md:gap-6">
-        {!getAllProducts.success && (
+        {(!getAllProducts || !getAllProducts?.data) && (
           <div className="text-center py-5">Product not found</div>
         )}
         {getAllProducts?.data?.map((prods) => (

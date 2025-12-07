@@ -3,9 +3,23 @@ import React from "react";
 import Card from "./shared/Card";
 
 const FeaturesProduct = async () => {
-  const { data: getFeaturedProduct } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`
-  );
+  let getFeaturedProduct = null;
+
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`
+    );
+    getFeaturedProduct = response.data;
+  } catch (error) {
+    // If it's a 404 error, we just ignore it and let categoryData remain null
+    // If it's another error (like 500), you might want to log it
+    if (error.response && error.response.status === 404) {
+      console.warn(`Feature product  not found.`);
+    } else {
+      console.error("Error fetching :Feature product", error.message);
+    }
+  }
+
   // mt-8  flex flex-wrap gap-4
   // grid md:grid-cols-4 grid-cols-2 sm:gap-10 gap-2
   return (
@@ -19,7 +33,7 @@ const FeaturesProduct = async () => {
         </p>
       </div>
       <div className="mt-8  grid  lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-3 md:gap-6">
-        {!getFeaturedProduct.success && (
+        {(!getFeaturedProduct || !getFeaturedProduct.data) && (
           <div className="text-center py-5">Product not found</div>
         )}
         {getFeaturedProduct?.data?.map((prods) => (
