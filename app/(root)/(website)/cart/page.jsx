@@ -272,6 +272,10 @@ const cartPage = () => {
   return (
     <div className="">
       <CartBanner />
+      {/* <div className="w-full flex flex-col md:hidden mt-10 px-4">
+        <h1 className="text-2xl font-bold">Cart</h1>
+        <p>There are 1 product in your cart</p>
+      </div> */}
       {count === 0 ? (
         <div className="md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-20 justify-center items-center">
           <div className="text-center">
@@ -291,7 +295,7 @@ const cartPage = () => {
             )}
           </div>
 
-          <div className="flex lg:flex-nowrap flex-wrap gap-10 my-10 px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40">
+          <div className="flex lg:flex-nowrap flex-wrap gap-10 mt-10 md:mt-0 my-0 md:my-10 px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40">
             <div className="lg:w-[70%] w-full">
               <table className="w-full border">
                 <thead className="border-b bg-gray-50 md:table-header-group hidden">

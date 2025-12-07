@@ -269,7 +269,7 @@ const ProductDetails = ({ product, isQuickView = false }) => {
           </div>
         )}
 
-        <div className="lg:flex justify-between items-start lg:gap-10 xl:gap-10 gap-5 mb-20">
+        <div className="lg:flex justify-between items-start lg:gap-10 xl:gap-15 gap-5 mb-20">
           <div className="lg:w-1/2  xl:flex justify-center  lg:sticky lg:top-0">
             <div className="xl:order-last xl:mb-0 mb-5 xl:w-[calc(100%-60px)]">
               <div className="w-full lg:w-[470px] lg:h-[420px] aspect-[4/3] overflow-hidden">
@@ -472,7 +472,7 @@ const ProductDetails = ({ product, isQuickView = false }) => {
             )}
           </div>
 
-          <div className="mt-5 w-[calc(100%-120px)] rounded-full py-3 text-md bg-blue-500 flex justify-center items-center ">
+          <div className="mt-5 w-[calc(100%-120px)] rounded-full py-3 text-md bg-blue-500 flex justify-center items-center">
             <div
               className="flex justify-between gap-4"
               onClick={handleAddToCard}

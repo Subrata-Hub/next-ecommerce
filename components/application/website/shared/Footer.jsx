@@ -17,12 +17,12 @@ import FeatureSection from "../FeatureSection";
 
 const Footer = () => {
   return (
-    <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 md:py-20">
-      <div className="lg:pl-6">
+    <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pb-10 md:pb-0 py-0 md:py-20">
+      <div className="lg:pl-0">
         <FeatureSection />
       </div>
       <div className="py-10">
-        <div className="w-full flex md:flex-row flex-col gap-y-8">
+        <div className="w-full flex md:flex-row flex-col gap-y-10">
           <div className="md:w-[40%] flex flex-col">
             {/* <div>
             <Logo />

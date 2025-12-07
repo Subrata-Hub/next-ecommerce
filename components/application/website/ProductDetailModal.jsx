@@ -23,7 +23,7 @@ const ProductDetailModal = ({ open, setOpen, product }) => {
           }
         }}
         className="sm:max-w-[90%] 2xl:max-w-[80%]  h-[calc(100vh-12rem)] mt-36 md:mt-8 md:h-auto 
-          md:max-h-[90vh]  overflow-y-scroll px-0  py-10 bg-white border-0 shadow-none z-[50]"
+          md:max-h-[90vh]  overflow-y-scroll px-0  py-15 bg-white border-0 shadow-none z-[50]"
       >
         <DialogDescription className="hidden"></DialogDescription>
         <DialogHeader className="h-1 border-b">

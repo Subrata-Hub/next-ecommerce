@@ -8,9 +8,12 @@ import Profile from "../Profile";
 import ShoppingCard from "./ShoppingCard";
 import Link from "next/link";
 import {
+  WEBSITE_CART,
   WEBSITE_HOME,
   WEBSITE_MOBILE_CATEGORIES,
 } from "@/routes/WebsiteRoutes";
+import { RiShoppingBag4Line } from "react-icons/ri";
+import FooterShoppingCart from "./FooterShoppingCart";
 
 const FooterNavbar = () => {
   return (
@@ -23,7 +26,8 @@ const FooterNavbar = () => {
         <BiSolidCategory className="text-2xl" />
       </Link>
 
-      <ShoppingCard />
+      {/* <ShoppingCard /> */}
+      <FooterShoppingCart />
 
       <MdFavoriteBorder className="text-2xl" />
 

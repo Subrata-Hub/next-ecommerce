@@ -14,7 +14,7 @@ const CoreInfo = () => {
   };
 
   return (
-    <div className="mb-20 pl-0 md:pl-8 h-auto relative">
+    <div className="mb-20 h-auto relative">
       <div className="shadow rounded border p-2 md:p-10 h-auto">
         <div className="w-full flex gap-2 md:gap-10 md:flex-wrap overflow-x-scroll hide-scrollbar">
           {coreInfo?.map((item, index) => (

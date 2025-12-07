@@ -5,7 +5,7 @@ import React from "react";
 
 const CartBanner = () => {
   return (
-    <div className="w-full h-[150px] relative">
+    <div className=" w-full  h-[140px]  md:h-[150px] relative">
       <Image
         src="https://res.cloudinary.com/duvvksw0w/image/upload/v1761267165/ecommerce/Frame-1597884148_wtmrvr.webp"
         alt="category-banner"

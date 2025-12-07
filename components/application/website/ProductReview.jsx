@@ -127,7 +127,7 @@ const ProductReview = ({ productId }) => {
 
   console.log(data);
   return (
-    <div className="shadow rounded border my-20 ml-8">
+    <div className=" shadow rounded border mb-0 my-0 md:my-20 ">
       <div className="p-3 bg-gray-50 border-b">
         <h2 className="font-semibold text-2xl">Rating & Review</h2>
       </div>

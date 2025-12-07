@@ -91,7 +91,7 @@ const SimilarProducts = ({ product }) => {
   console.log(getSimilarProducts);
 
   return (
-    <div className=" pl-8">
+    <div className="">
       <div className="flex flex-col gap-y-4 justify-center items-center">
         <h2 className="text-3xl font-bold">You May Also Like</h2>
         <p className="text-gray-500 text-center">
