@@ -1,6 +1,7 @@
 import GlobalProvider from "@/components/application/GlobalProvider";
 import "./globals.css";
 import { Assistant } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { ToastContainer } from "react-toastify";
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <ToastContainer />
 
           {children}
+          <SpeedInsights />
           {/* 3. Render the wrapper instead of direct Login */}
           <AuthWrapper />
         </GlobalProvider>
