@@ -3,7 +3,7 @@ import { USER_DASBOARD, WEBSITE_LOGIN } from "./routes/WebsiteRoutes";
 import { jwtVerify } from "jose";
 import { ADMIN_DASBOARD } from "./routes/AddminPanelRoutes";
 
-export const middleware = async (request) => {
+export const proxy = async (request) => {
   const { pathname } = request.nextUrl;
 
   try {
@@ -69,6 +69,5 @@ export const middleware = async (request) => {
 };
 
 export const config = {
-  matcher: ["/admin/:path*", "/my-account/:path*", "/auth/:path*"],
-  runtime: "nodejs",
+  matcher: ["/admin/:path*", "/my-account/:path*", "/auth/:path*"]
 };
