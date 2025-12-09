@@ -3,14 +3,34 @@ import ProductDetails from "@/components/application/website/ProductDetails";
 import ProductReview from "@/components/application/website/ProductReview";
 import SimilarProducts from "@/components/application/website/SimilarProducts";
 import axios from "axios";
+import { cacheLife, cacheTag } from "next/cache";
 import React from "react";
+
+const getCachedProductDetails = async (slug) => {
+  "use cache: remote";
+  cacheTag(`product-details-${slug}`);
+  cacheLife({ expire: 3600 }); // 1 hour
+
+  try {
+    // This runs on the server. Next.js will cache the RESULT of this function.
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/details/${slug}`
+    );
+    return data;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return { success: false }; // Return a fallback structure to prevent crashes
+  }
+};
 
 const page = async ({ params }) => {
   const { slug } = await params;
 
-  const { data: productData } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/details/${slug}`
-  );
+  // const { data: productData } = await axios.get(
+  //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/details/${slug}`
+  // );
+
+  const productData = await getCachedProductDetails(slug);
 
   if (!productData.success) {
     return (

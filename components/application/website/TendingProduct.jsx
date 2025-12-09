@@ -5,25 +5,48 @@ import Card from "./shared/Card";
 import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import slugify from "slugify";
+import { cacheLife, cacheTag } from "next/cache";
 // import useFetch from "@/hooks/useFetch";
 
-const TendingProduct = async () => {
-  let getAllProducts = null;
-
+const getCachedTendingProduct = async () => {
+  "use cache: remote";
+  cacheTag(`tending-product`);
+  cacheLife({ expire: 3600 * 24 }); // 24 hour
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
     );
-    getAllProducts = response.data;
+    const getTendingProducts = response.data;
+
+    return getTendingProducts;
   } catch (error) {
-    // If it's a 404 error, we just ignore it and let categoryData remain null
-    // If it's another error (like 500), you might want to log it
     if (error.response && error.response.status === 404) {
       console.warn(`Tranding Product not found.`);
     } else {
       console.error("Error fetching Tranding Product :", error.message);
     }
   }
+};
+
+const TendingProduct = async () => {
+  let getTendingProducts = null;
+
+  getTendingProducts = getCachedTendingProduct();
+
+  // try {
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
+  //   );
+  //   getAllProducts = response.data;
+  // } catch (error) {
+  //   // If it's a 404 error, we just ignore it and let categoryData remain null
+  //   // If it's another error (like 500), you might want to log it
+  //   if (error.response && error.response.status === 404) {
+  //     console.warn(`Tranding Product not found.`);
+  //   } else {
+  //     console.error("Error fetching Tranding Product :", error.message);
+  //   }
+  // }
 
   return (
     <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-28">
@@ -54,7 +77,7 @@ const TendingProduct = async () => {
         ))}
       </div> */}
       <div className="mt-8 grid  lg:grid-cols-3 xl:grid-cols-4 grid-cols-2 gap-3 md:gap-6">
-        {(!getAllProducts || !getAllProducts?.data) && (
+        {(!getTendingProducts || !getTendingProducts?.data) && (
           <div className="text-center py-5">Product not found</div>
         )}
         {getAllProducts?.data?.map((prods) => (

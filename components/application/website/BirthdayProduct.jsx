@@ -4,22 +4,45 @@ import axios from "axios";
 import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import slugify from "slugify";
+import { cacheLife, cacheTag } from "next/cache";
 
-const BirthdayProduct = async () => {
-  let getBirthdayProducts = null;
-
+const getCachedBrithdayProduct = async () => {
+  "use cache: remote";
+  cacheTag(`brithday-product`);
+  cacheLife({ expire: 3600 * 24 }); // 24 hour
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
     );
-    getBirthdayProducts = response.data;
+    const getBirthdayProducts = response.data;
+    return getBirthdayProducts;
   } catch (error) {
     if (error.response && error.response.status === 404) {
       console.warn(`birthday product not found.`);
     } else {
       console.error("Error fetching birthday products:", error.message);
+      return { success: false };
     }
   }
+};
+
+const BirthdayProduct = async () => {
+  let getBirthdayProducts = null;
+
+  getBirthdayProducts = await getCachedBrithdayProduct();
+
+  // try {
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
+  //   );
+  //   getBirthdayProducts = response.data;
+  // } catch (error) {
+  //   if (error.response && error.response.status === 404) {
+  //     console.warn(`birthday product not found.`);
+  //   } else {
+  //     console.error("Error fetching birthday products:", error.message);
+  //   }
+  // }
 
   return (
     <div className="px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-28">

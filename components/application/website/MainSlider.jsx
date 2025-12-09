@@ -72,7 +72,7 @@ const MainSlider = () => {
         <Image
           src={baner2}
           width={baner2.width}
-          height={baner2.height}
+          height={baner1.height}
           alt="banner2"
         />
         <button
