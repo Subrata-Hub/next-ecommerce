@@ -24,6 +24,7 @@ const getCachedTendingProduct = async () => {
       console.warn(`Tranding Product not found.`);
     } else {
       console.error("Error fetching Tranding Product :", error.message);
+      return { success: false };
     }
   }
 };
@@ -80,7 +81,7 @@ const TendingProduct = async () => {
         {(!getTendingProducts || !getTendingProducts?.data) && (
           <div className="text-center py-5">Product not found</div>
         )}
-        {getAllProducts?.data?.map((prods) => (
+        {getTendingProducts?.data?.map((prods) => (
           <Card key={prods._id} product={prods} />
         ))}
       </div>
