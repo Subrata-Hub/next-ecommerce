@@ -96,6 +96,8 @@ const Daypicker = ({ onSelectDate }) => {
   const [date, setDate] = React.useState(() => parseDate(value));
   const [month, setMonth] = React.useState(date || new Date());
 
+  const today = React.useMemo(() => new Date(), []);
+
   // Handle manual input changes
   const handleInputChange = (e) => {
     const newVal = e.target.value;
@@ -164,7 +166,7 @@ const Daypicker = ({ onSelectDate }) => {
                 }
               }}
               disabled={{
-                before: Date.now(),
+                before: today,
               }}
             />
           </PopoverContent>
