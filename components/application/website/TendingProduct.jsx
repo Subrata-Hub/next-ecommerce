@@ -32,7 +32,7 @@ const getCachedTendingProduct = async () => {
 const TendingProduct = async () => {
   let getTendingProducts = null;
 
-  getTendingProducts = getCachedTendingProduct();
+  getTendingProducts = await getCachedTendingProduct();
 
   // try {
   //   const response = await axios.get(
