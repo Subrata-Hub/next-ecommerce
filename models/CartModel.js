@@ -35,6 +35,10 @@ const cartItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  media: {
+    type: String,
+    require: true,
+  },
   mrp: {
     type: Number,
     required: true,

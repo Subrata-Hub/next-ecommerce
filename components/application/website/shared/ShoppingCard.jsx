@@ -142,7 +142,7 @@ const ShoppingCard = () => {
                   <div className="flex flex-col flex-1">
                     <div className="flex justify-between items-center">
                       <div className="font-semibold">
-                        <h2>{prod.name}</h2>
+                        <h2>{prod.productName}</h2>
                       </div>
 
                       <div

@@ -167,7 +167,7 @@ const cartPage = () => {
       dietary: product?.dietary,
       flavour: product?.flavour,
     };
-    navigate.push(PRODUCT_DETAILS(product?.url));
+    navigate.push(PRODUCT_DETAILS(product?.productUrl));
     dispatch(addVariant(selectedProductAndVariant));
   };
 
@@ -320,7 +320,7 @@ const cartPage = () => {
                               src={prod.media || imagePlaceholder.src}
                               width={60}
                               height={60}
-                              alt={prod.name}
+                              alt={prod.productName}
                               className="w-full h-full object-cover rounded-xl"
                             />
                           </div>
@@ -330,7 +330,7 @@ const cartPage = () => {
                               className="text-lg line-clamp-1 font-semibold"
                               onClick={() => handleClick(prod)}
                             >
-                              {prod.name}
+                              {prod.productName}
                               {/* <Link href={PRODUCT_DETAILS(prod.url)}>
                               {prod.name}
                             </Link> */}

@@ -62,6 +62,7 @@ export const POST = async (request) => {
       variantId: variant._id,
       productName: product.name,
       productUrl: product.slug,
+      media: product?.media[0]?.secure_url,
       weight: variant.weight,
       flavour: variant.flavour,
       cream: variant.cream,
