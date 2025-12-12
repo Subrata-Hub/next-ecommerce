@@ -5,31 +5,36 @@ import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import slugify from "slugify";
 import { cacheLife, cacheTag } from "next/cache";
+import { getProductsByCategorySlug } from "@/app/actions/getProductsByCategorySlug";
 
 const getCachedBrithdayProduct = async () => {
   "use cache: remote";
   cacheTag(`brithday-product`);
   cacheLife({ expire: 3600 * 24 }); // 24 hour
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
-    );
-    const getBirthdayProducts = response.data;
+    // const response = await axios.get(
+    //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
+    // );
+    const response = await getProductsByCategorySlug("birthday");
+    const getBirthdayProducts = response;
+
     return getBirthdayProducts;
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      console.warn(`birthday product not found.`);
-    } else {
-      console.error("Error fetching birthday products:", error.message);
-      return { success: false };
-    }
+    // if (error.response && error.response.status === 404) {
+    //   console.warn(`birthday product not found.`);
+    // } else {
+    //   console.error("Error fetching birthday products:", error.message);
+    //   return { success: false };
+    // }
+    console.error("Error fetching birthday products:", error.message);
+    return { success: false, data: [] };
   }
 };
 
 const BirthdayProduct = async () => {
-  let getBirthdayProducts = null;
+  // let getBirthdayProducts = null;
 
-  getBirthdayProducts = await getCachedBrithdayProduct();
+  const getBirthdayProducts = await getCachedBrithdayProduct();
 
   // try {
   //   const response = await axios.get(

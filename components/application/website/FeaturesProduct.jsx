@@ -1,24 +1,42 @@
 import axios from "axios";
 import React from "react";
 import Card from "./shared/Card";
+import { getFeaturesProducts } from "@/app/actions/getFeaturesProducts";
+import { cacheLife, cacheTag } from "next/cache";
 
-const FeaturesProduct = async () => {
-  let getFeaturedProduct = null;
+const getCactchFeaturesProduct = async () => {
+  "use cache: remote";
+  cacheTag(`tending-product`);
+  cacheLife({ expire: 3600 * 2 }); // 2 hour
 
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`
-    );
-    getFeaturedProduct = response.data;
+    const response = await getFeaturesProducts();
+    return response;
   } catch (error) {
-    // If it's a 404 error, we just ignore it and let categoryData remain null
-    // If it's another error (like 500), you might want to log it
-    if (error.response && error.response.status === 404) {
-      console.warn(`Feature product  not found.`);
-    } else {
-      console.error("Error fetching :Feature product", error.message);
-    }
+    console.error("Error fetching Features products:", error.message);
+    return { success: false, data: [] };
   }
+};
+
+const FeaturesProduct = async () => {
+  // let getFeaturedProduct = null;
+
+  const getFeaturedProduct = await getCactchFeaturesProduct();
+
+  // try {
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`
+  //   );
+  //   getFeaturedProduct = response.data;
+  // } catch (error) {
+  //   // If it's a 404 error, we just ignore it and let categoryData remain null
+  //   // If it's another error (like 500), you might want to log it
+  //   if (error.response && error.response.status === 404) {
+  //     console.warn(`Feature product  not found.`);
+  //   } else {
+  //     console.error("Error fetching :Feature product", error.message);
+  //   }
+  // }
 
   // mt-8  flex flex-wrap gap-4
   // grid md:grid-cols-4 grid-cols-2 sm:gap-10 gap-2

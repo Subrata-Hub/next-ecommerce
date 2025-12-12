@@ -1,4 +1,5 @@
 // import Categories from "@/components/application/website/shared/Categories";
+
 import MainSlider from "@/components/application/website/MainSlider";
 
 import React from "react";

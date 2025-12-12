@@ -6,33 +6,44 @@ import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import slugify from "slugify";
 import { cacheLife, cacheTag } from "next/cache";
+import { getProductsByCategorySlug } from "@/app/actions/getProductsByCategorySlug";
 // import useFetch from "@/hooks/useFetch";
 
 const getCachedTendingProduct = async () => {
   "use cache: remote";
   cacheTag(`tending-product`);
-  cacheLife({ expire: 3600 * 24 }); // 24 hour
+  cacheLife({ expire: 3600 * 2 }); // 2 hour
+  // try {
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
+  //   );
+  //   const getTendingProducts = response.data;
+
+  //   return getTendingProducts;
+  // } catch (error) {
+  //   if (error.response && error.response.status === 404) {
+  //     console.warn(`Tranding Product not found.`);
+  //   } else {
+  //     console.error("Error fetching Tranding Product :", error.message);
+  //     return { success: false };
+  //   }
+  // }
+
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/tranding`
-    );
-    const getTendingProducts = response.data;
+    const response = await getProductsByCategorySlug("tranding");
+    const getTendingProducts = response;
 
     return getTendingProducts;
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      console.warn(`Tranding Product not found.`);
-    } else {
-      console.error("Error fetching Tranding Product :", error.message);
-      return { success: false };
-    }
+    console.error("Error fetching tending products:", error.message);
+    return { success: false, data: [] };
   }
 };
 
 const TendingProduct = async () => {
-  let getTendingProducts = null;
+  // let getTendingProducts = null;
 
-  getTendingProducts = await getCachedTendingProduct();
+  const getTendingProducts = await getCachedTendingProduct();
 
   // try {
   //   const response = await axios.get(
