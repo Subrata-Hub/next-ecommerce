@@ -26,7 +26,7 @@ import { showToast } from "@/lib/showToast";
 import { getLocalCartId, setLocalCartId } from "@/lib/helperFunction";
 import UpdateLoading from "../UpdateLoading";
 
-const ShoppingCard = ({ cart, auth }) => {
+const ShoppingCard = ({ cart }) => {
   const dispatch = useDispatch();
   const authFromStore = useSelector((store) => store.authStore.auth);
   const [quantity, setQuantity] = useState(1);
@@ -34,6 +34,7 @@ const ShoppingCard = ({ cart, auth }) => {
 
   const [updateLoading, setUpdateLoading] = useState(false);
   const cartStore = useSelector((state) => state.cartStore);
+  const auth = useSelector((state) => state.authStore.auth);
   const count = cartStore.count;
   const products = cartStore.products;
 
@@ -57,6 +58,7 @@ const ShoppingCard = ({ cart, auth }) => {
 
   const removeItem = async (productId, productVariantId, quantity) => {
     let currentCartId = getLocalCartId();
+    const userId = auth !== null ? auth._id : auth;
     const existingProduct = products.find(
       (product) =>
         product.productId === productId &&
@@ -64,6 +66,7 @@ const ShoppingCard = ({ cart, auth }) => {
     );
     const negativeQuantity = -existingProduct.quantity;
     const productData = {
+      userId: userId,
       productId: productId,
       variantId: productVariantId, // We always dispatch a quantity of 1 for the click action
       quantity: negativeQuantity,

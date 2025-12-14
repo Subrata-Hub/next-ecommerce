@@ -115,6 +115,7 @@ const cartPage = () => {
 
   const removeItem = async (productId, productVariantId, quantity) => {
     let currentCartId = getLocalCartId();
+    const userId = auth !== null ? auth._id : auth;
     const existingProduct = products.find(
       (product) =>
         product.productId === productId &&
@@ -126,6 +127,7 @@ const cartPage = () => {
       variantId: productVariantId, // We always dispatch a quantity of 1 for the click action
       quantity: negativeQuantity,
       cartId: currentCartId ? currentCartId : null,
+      userId: userId,
     };
 
     setQuantity(1); // Dispatch productData instead of existingProduct
