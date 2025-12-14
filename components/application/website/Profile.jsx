@@ -1,18 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "../auth/Login";
-import { setLoginPopup } from "@/store/slices/authSlice";
+import { login, setLoginPopup } from "@/store/slices/authSlice";
 
-const Profile = () => {
+const Profile = ({ auth }) => {
   const dispatch = useDispatch();
-  const auth = useSelector((store) => store.authStore.auth);
+  const authFromStore = useSelector((store) => store.authStore.auth);
   // const loginPopup = useSelector((state) => state.authStore.loginPopup);
   // const [loginPopup, setLoginPopup] = useState(false);
+
+  // useEffect(() => {
+  //   dispatch(login(auth));
+  // }, [auth]);
   return (
     <div>
-      {auth ? (
+      {authFromStore ? (
         <FaRegUser className="text-2xl" />
       ) : (
         <button

@@ -13,8 +13,11 @@ import {
 import Image from "next/image";
 import { RiDeleteBinLine } from "react-icons/ri";
 import AddToCard from "./AddToCard";
-import { useState } from "react";
-import { removeProductToCart } from "@/store/slices/cartSlice";
+import { useEffect, useState } from "react";
+import {
+  removeProductToCart,
+  updateInitialState,
+} from "@/store/slices/cartSlice";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { WEBSITE_CART } from "@/routes/WebsiteRoutes";
@@ -23,8 +26,9 @@ import { showToast } from "@/lib/showToast";
 import { getLocalCartId, setLocalCartId } from "@/lib/helperFunction";
 import UpdateLoading from "../UpdateLoading";
 
-const ShoppingCard = () => {
+const ShoppingCard = ({ cart, auth }) => {
   const dispatch = useDispatch();
+  const authFromStore = useSelector((store) => store.authStore.auth);
   const [quantity, setQuantity] = useState(1);
   const [open, setOpen] = useState(false);
 
@@ -32,6 +36,8 @@ const ShoppingCard = () => {
   const cartStore = useSelector((state) => state.cartStore);
   const count = cartStore.count;
   const products = cartStore.products;
+
+  console.log(cart);
 
   const subTotal = cartStore.products.reduce(
     (acc, prod) => acc + prod.sellingPrice * prod.quantity,
@@ -95,6 +101,18 @@ const ShoppingCard = () => {
       setUpdateLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      dispatch(
+        updateInitialState({
+          products: cart?.[0]?.cartItems,
+          count: cart?.[0]?.totalItem,
+        })
+      );
+      localStorage.setItem("cartId", cart?.[0]._id);
+    }
+  }, [cart]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

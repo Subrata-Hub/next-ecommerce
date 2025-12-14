@@ -24,6 +24,7 @@ import OTPVerification from "@/components/application/OTPVerification";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 import { setShowAddressForm } from "@/store/slices/settingSlice";
+import { getLocalCartId } from "@/lib/helperFunction";
 
 const Login = () => {
   // State: 'LOGIN' | 'REGISTER' | 'OTP'
@@ -38,6 +39,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const cartId = getLocalCartId();
 
   const handleOtpVerification = async (values) => {
     try {
@@ -52,6 +54,12 @@ const Login = () => {
       // if (!loginPopup) {
       //   dispatch(setShowAddressForm(true));
       // }
+
+      // updating guest carts
+
+      if (cartId && data.success) {
+        const { data } = await axios.post("/api/cart/update-user", { cartId });
+      }
 
       // Redirect logic
       // Priority 1: Check Redux state (set by Cart page)

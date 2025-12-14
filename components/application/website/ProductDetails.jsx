@@ -252,6 +252,7 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     setIsAddedIntoCard(true);
 
     showToast("success", "product added into card");
+
     router.push(WEBSITE_CART);
   };
 

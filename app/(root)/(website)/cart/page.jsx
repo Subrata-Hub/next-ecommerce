@@ -70,6 +70,7 @@ const cartPage = () => {
   );
 
   const currentCartId = getLocalCartId();
+
   const formSchema = credentialsSchema.pick({
     code: true,
     cartId: true,

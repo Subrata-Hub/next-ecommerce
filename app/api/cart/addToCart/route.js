@@ -82,8 +82,10 @@ export const POST = async (request) => {
       cart = await CartModel.findById(data.cartId);
     }
 
+    const existingUser = cart?.userId;
+
     // 5. Logic: Create New OR Update Existing
-    if (!cart) {
+    if (!cart && !existingUser) {
       // --- Create New Cart ---
       cart = new CartModel({
         cartItems: [newItem],

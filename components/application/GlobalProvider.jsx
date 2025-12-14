@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import Loadings from "./Loadings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
+import { clearCart } from "@/store/slices/cartSlice";
 
 /**
  * This component runs AFTER Redux-Persist rehydrates.
@@ -29,6 +30,8 @@ const AuthInitializer = () => {
           (error.response.status === 401 || error.response.status === 403)
         ) {
           appStore.dispatch(logout());
+          appStore.dispatch(clearCart());
+          localStorage.removeItem("cartId");
         }
       }
     };
@@ -41,6 +44,7 @@ const AuthInitializer = () => {
         const status = error?.response?.status;
         if (status === 401 || status === 403) {
           appStore.dispatch(logout());
+          // appStore.dispatch(clearCart());
         }
         return Promise.reject(error);
       }
