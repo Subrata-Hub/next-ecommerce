@@ -7,7 +7,7 @@ import slugify from "slugify";
 import { cacheLife, cacheTag } from "next/cache";
 import { getProductsByCategorySlug } from "@/app/actions/getProductsByCategorySlug";
 
-const getCachedBrithdayProduct = async () => {
+const getCachedBrithdayProduct = async (birthday) => {
   "use cache: remote";
   cacheTag(`brithday-product`);
   cacheLife({ expire: 3600 * 24 }); // 24 hour
@@ -15,7 +15,7 @@ const getCachedBrithdayProduct = async () => {
     // const response = await axios.get(
     //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/list/birthday`
     // );
-    const response = await getProductsByCategorySlug("birthday");
+    const response = await getProductsByCategorySlug(birthday);
     const getBirthdayProducts = response;
 
     return getBirthdayProducts;
@@ -34,7 +34,7 @@ const getCachedBrithdayProduct = async () => {
 const BirthdayProduct = async () => {
   // let getBirthdayProducts = null;
 
-  const getBirthdayProducts = await getCachedBrithdayProduct();
+  const getBirthdayProducts = await getCachedBrithdayProduct("birthday");
 
   // try {
   //   const response = await axios.get(

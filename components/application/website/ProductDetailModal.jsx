@@ -29,7 +29,11 @@ const ProductDetailModal = ({ open, setOpen, product }) => {
         <DialogHeader className="h-1 border-b">
           <DialogTitle className="text-black"></DialogTitle>
         </DialogHeader>
-        <ProductDetails product={product} isQuickView={true} />
+        <ProductDetails
+          product={product}
+          isQuickView={true}
+          setOpen={setOpen}
+        />
       </DialogContent>
     </Dialog>
   );

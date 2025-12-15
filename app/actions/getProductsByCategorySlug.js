@@ -179,7 +179,9 @@ export const getProductsByCategorySlug = async (slug) => {
       {
         $addFields: {
           weights: { $setUnion: "$variants.weight" },
-          // ... other fields
+          flavours: { $setUnion: "$variants.flavour" },
+          creams: { $setUnion: "$variants.cream" },
+          dietarys: { $setUnion: "$variants.dietary" },
         },
       },
       { $match: { variants: { $ne: [] } } },

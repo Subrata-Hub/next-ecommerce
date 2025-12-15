@@ -9,7 +9,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { getProductsByCategorySlug } from "@/app/actions/getProductsByCategorySlug";
 // import useFetch from "@/hooks/useFetch";
 
-const getCachedTendingProduct = async () => {
+const getCachedTendingProduct = async (tending) => {
   "use cache: remote";
   cacheTag(`tending-product`);
   cacheLife({ expire: 3600 * 2 }); // 2 hour
@@ -30,7 +30,7 @@ const getCachedTendingProduct = async () => {
   // }
 
   try {
-    const response = await getProductsByCategorySlug("tranding");
+    const response = await getProductsByCategorySlug(tending);
     const getTendingProducts = response;
 
     return getTendingProducts;
@@ -43,7 +43,9 @@ const getCachedTendingProduct = async () => {
 const TendingProduct = async () => {
   // let getTendingProducts = null;
 
-  const getTendingProducts = await getCachedTendingProduct();
+  const getTendingProducts = await getCachedTendingProduct("tranding");
+
+  console.log(getTendingProducts);
 
   // try {
   //   const response = await axios.get(

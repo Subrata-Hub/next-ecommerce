@@ -23,6 +23,8 @@ const FeaturesProduct = async () => {
 
   const getFeaturedProduct = await getCactchFeaturesProduct();
 
+  console.log(getFeaturedProduct);
+
   // try {
   //   const response = await axios.get(
   //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/get-featured-product`

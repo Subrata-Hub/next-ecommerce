@@ -68,7 +68,7 @@ const toBase64 = (str) =>
     ? Buffer.from(str).toString("base64")
     : window.btoa(str);
 
-const ProductDetails = ({ product, isQuickView = false }) => {
+const ProductDetails = ({ product, isQuickView = false, setOpen }) => {
   const variant = useSelector((store) => store.cartStore.selectedVariant);
   const auth = useSelector((state) => state.authStore.auth);
   const dispatch = useDispatch();
@@ -254,6 +254,9 @@ const ProductDetails = ({ product, isQuickView = false }) => {
     showToast("success", "product added into card");
 
     router.push(WEBSITE_CART);
+    if (isQuickView) {
+      setOpen(false);
+    }
   };
 
   const safeDescription = DOMPurify.sanitize(product?.description || "");
