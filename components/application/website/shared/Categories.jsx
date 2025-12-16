@@ -120,7 +120,7 @@ const Categories = () => {
   return (
     <>
       {windowSize.width > 768 && (
-        <nav className="hidden md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 py-4 ml-8  relative z-50">
+        <nav className="hidden md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 py-4 ml-8  relative ">
           {/* 2. Added 'relative' here so the dropdown positions against the full width of the UL, not the individual LI */}
           <ul className="flex justify-between items-center gap-4 lg:gap-6 w-full relative">
             {categorieMenu?.map((categorie, index) => (

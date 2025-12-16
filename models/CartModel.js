@@ -20,7 +20,7 @@ const cartItemSchema = new mongoose.Schema({
     required: true,
   },
   weight: {
-    type: String,
+    type: Number,
     required: true,
   },
   flavour: {
