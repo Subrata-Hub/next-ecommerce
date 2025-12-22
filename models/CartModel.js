@@ -81,6 +81,12 @@ const cartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  addressId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address",
+    require: false,
+    default: null,
+  },
   cartItems: [cartItemSchema],
   subTotal: {
     type: Number,

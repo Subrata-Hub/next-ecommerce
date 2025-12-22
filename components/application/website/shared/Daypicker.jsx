@@ -35,9 +35,6 @@ function parseDate(str, now) {
 
   const d = new Date(str);
   if (isNaN(d.getTime())) return null;
-
-  if (d.getFullYear() < now.getFullYear()) return null;
-
   return d;
 }
 
@@ -52,23 +49,38 @@ function formatDate(date) {
 
 /* -------------------- component -------------------- */
 
-const Daypicker = ({ onSelectDate }) => {
+const Daypicker = ({
+  value, // ✅ Date from parent
+  onSelectDate,
+  disableFuture = false,
+  disablePast = false,
+}) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [inputValue, setInputValue] = React.useState(""); // ✅ renamed
   const [date, setDate] = React.useState(null);
   const [month, setMonth] = React.useState(null);
   const [today, setToday] = React.useState(null);
 
-  // ✅ ALL time-based logic here
   React.useEffect(() => {
     const now = new Date();
     setToday(now);
     setMonth(now);
   }, []);
 
+  React.useEffect(() => {
+    if (value instanceof Date) {
+      setDate(value);
+      setMonth(value);
+      setInputValue(formatDate(value));
+    } else {
+      setDate(null);
+      setInputValue("");
+    }
+  }, [value]);
+
   const handleInputChange = (e) => {
     const newVal = e.target.value;
-    setValue(newVal);
+    setInputValue(newVal);
 
     if (!today) return;
 
@@ -83,13 +95,13 @@ const Daypicker = ({ onSelectDate }) => {
     }
   };
 
-  if (!today) return null; // ✅ prevents prerender access
+  if (!today) return null;
 
   return (
     <div className="flex flex-col gap-3">
       <div className="relative flex gap-2">
         <Input
-          value={value}
+          value={inputValue}
           placeholder="Select a date..."
           className="bg-background pr-10"
           onChange={handleInputChange}
@@ -111,20 +123,24 @@ const Daypicker = ({ onSelectDate }) => {
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-auto p-0" align="end">
+          <PopoverContent className="w-auto p-0 align='end'">
             <Calendar
               mode="single"
               selected={date}
               month={month}
+              captionLayout="dropdown"
               onMonthChange={setMonth}
               onSelect={(d) => {
                 if (!d) return;
                 setDate(d);
-                setValue(formatDate(d));
+                setInputValue(formatDate(d));
                 setOpen(false);
                 onSelectDate?.(d);
               }}
-              disabled={{ before: today }}
+              disabled={{
+                ...(disableFuture ? { after: today } : {}),
+                ...(disablePast ? { before: today } : {}),
+              }}
             />
           </PopoverContent>
         </Popover>

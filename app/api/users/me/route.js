@@ -44,13 +44,25 @@ export const GET = async (request) => {
       },
 
       {
+        $lookup: {
+          from: "favourites",
+          localField: "_id",
+          foreignField: "userId",
+          as: "favourites",
+        },
+      },
+
+      {
         $project: {
           name: 1,
           email: 1,
-
+          phoneNumber: 1,
+          date_of_brith: 1,
+          date_of_anniversary: 1,
           avatar: 1,
           cart: 1,
           address: 1,
+          favourites: 1,
         },
       },
     ];

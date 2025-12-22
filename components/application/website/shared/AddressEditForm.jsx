@@ -1,4 +1,3 @@
-"use client";
 import { addressSchema } from "@/zodSchema/addressSchema";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -23,35 +22,18 @@ import useFetch from "@/hooks/useFetch";
 import { getDistance } from "geolib";
 import { showToast } from "@/lib/showToast";
 import axios from "axios";
-
-import { setShowAddressForm } from "@/store/slices/settingSlice";
-import { setPostLoginRedirect } from "@/store/slices/authSlice";
-import { WEBSITE_CHECKOUT } from "@/routes/WebsiteRoutes";
-import { useRouter } from "next/navigation";
+import z from "zod";
 import { getLocalCartId } from "@/lib/helperFunction";
-
-// const sessionKey = uuidv4();
 
 const access_token = process.env.NEXT_PUBLIC_ACCESS_TOKEN;
 
-const AddressForm = ({
-  setRefetchAddres,
-  setSelectedAddress,
-  setShowSelectedAddress,
-  refetch,
-}) => {
-  const dispatch = useDispatch();
-  const router = useRouter();
+const AddressEditForm = ({ selectedAddress, onUpdateSuccess }) => {
   const [loading, setLoading] = useState(false);
-  const auth = useSelector((state) => state.authStore.auth);
   const [sessionToken] = useState(() => uuidv4());
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const postAddressRedirect = useSelector(
-    (state) => state.authStore.postLoginRedirect
-  );
-  // const [location, setLocation] = useState({ lat: 0, lng: 0 });
-  // const [distanceFromOrign, setDistanceFromOrign] = useState(0);
+
+  console.log(selectedAddress);
 
   const { data: getSuggestion } = useFetch(
     `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(
@@ -59,47 +41,45 @@ const AddressForm = ({
     )}&access_token=${access_token}&session_token=${sessionToken}`
   );
 
-  // const { data: address, loading: addressLoading } = useFetch(
-  //   "/api/address/getAddress",
-  //   "GET",
-  //   {},
-  //   !!auth // ⭐ only run when auth exists
-  // );
-
-  const formSchema = addressSchema.pick({
-    label: true,
-    addressType: true,
-    firstName: true,
-    lastName: true,
-    phoneNumber: true,
-    autocomplete_location: true,
-    address_line_1: true,
-    address_line_2: true,
-    city: true,
-    state: true,
-    pincode: true,
-    location: true,
-    distance: true,
-    isDefaultAddress: true,
-  });
+  const formSchema = addressSchema
+    .pick({
+      label: true,
+      addressType: true,
+      firstName: true,
+      lastName: true,
+      phoneNumber: true,
+      autocomplete_location: true,
+      address_line_1: true,
+      address_line_2: true,
+      city: true,
+      state: true,
+      pincode: true,
+      location: true,
+      distance: true,
+      isDefaultAddress: true,
+    })
+    .extend({
+      addressId: z.string().min("3", "address field is required"),
+    });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      label: "",
-      addressType: "",
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
+      addressId: selectedAddress?._id,
+      label: selectedAddress?.label,
+      addressType: selectedAddress?.addressType,
+      firstName: selectedAddress?.firstName,
+      lastName: selectedAddress?.lastName,
+      phoneNumber: selectedAddress?.phoneNumber.toString(),
       autocomplete_location: "",
-      address_line_1: "",
-      address_line_2: "",
-      city: "",
-      state: "",
-      pincode: "",
-      location: { lat: 0, lng: 0 },
-      distance: 0,
-      isDefaultAddress: false,
+      address_line_1: selectedAddress?.address_line_1,
+      address_line_2: selectedAddress?.address_line_2,
+      city: selectedAddress?.city,
+      state: selectedAddress?.state,
+      pincode: selectedAddress?.pincode,
+      location: selectedAddress?.location,
+      distance: selectedAddress?.distance,
+      isDefaultAddress: selectedAddress?.isDefaultAddress,
     },
   });
 
@@ -212,41 +192,17 @@ const AddressForm = ({
       console.error("Error fetching address details:", error);
     }
   };
+
   const onSubmit = async (values) => {
     setLoading(true);
     try {
-      const { data: response } = await axios.post(
-        "/api/address/create",
-        values
-      );
+      const { data: response } = await axios.put("/api/address/update", values);
 
       if (!response.success) {
         throw new Error(response.message);
       }
 
       console.log(response);
-
-      // if (address.data && address.data.length > 0) {
-      //   setRefetchAddres(true);
-      //   router.push(WEBSITE_CHECKOUT);
-      // } else {
-      //   const newAddressId = response.data?._id || response.data?.id; // Ensure your API returns the created object
-      //   const currentCartId = getLocalCartId();
-
-      //   if (newAddressId && currentCartId) {
-      //     try {
-      //       await axios.post(`/api/cart/update`, {
-      //         cartId: currentCartId,
-      //         addressId: newAddressId,
-      //       });
-
-      //       // dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
-      //     } catch (cartError) {
-      //       console.error("Background cart update failed:", cartError);
-      //       // Optional: You might want to throw here if cart update is mandatory
-      //     }
-      //   }
-      // }
 
       const newAddressId = response.data?._id || response.data?.id; // Ensure your API returns the created object
       const currentCartId = getLocalCartId();
@@ -258,11 +214,6 @@ const AddressForm = ({
             addressId: newAddressId,
           });
 
-          setSelectedAddress(response.data);
-          setShowSelectedAddress(true);
-          refetch();
-          setRefetchAddres(true);
-
           // dispatch(setPostLoginRedirect(WEBSITE_CHECKOUT));
         } catch (cartError) {
           console.error("Background cart update failed:", cartError);
@@ -270,14 +221,10 @@ const AddressForm = ({
         }
       }
 
-      dispatch(setShowAddressForm(false));
-      form.reset();
       showToast("success", response.message);
 
-      // router.push(WEBSITE_CHECKOUT);
-      if (postAddressRedirect) {
-        router.push(postAddressRedirect);
-        dispatch(setPostLoginRedirect(null));
+      if (onUpdateSuccess) {
+        onUpdateSuccess();
       }
     } catch (error) {
       showToast("error", error.message);
@@ -285,6 +232,7 @@ const AddressForm = ({
       setLoading(false);
     }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -404,20 +352,6 @@ const AddressForm = ({
                       }}
                       autoComplete="off"
                     />
-                    {/* <div className="relative">
-                      <svg
-                        className="absolute"
-                        viewBox="0 0 18 18"
-                        xmlSpace="preserve"
-                        width="20"
-                        height="20"
-                        fill="currentColor"
-                        style={{ top: 8, right: 8 }}
-                      >
-                        <path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z"></path>
-                      </svg>
-                     
-                    </div> */}
                   </FormControl>
 
                   <FormMessage />
@@ -534,7 +468,7 @@ const AddressForm = ({
         <div className="mt-5 flex justify-end">
           <ButtonLoading
             type="submit"
-            text="Add Address"
+            text="Update Address"
             className="cursor-pointer"
             loading={loading}
           />
@@ -544,4 +478,4 @@ const AddressForm = ({
   );
 };
 
-export default AddressForm;
+export default AddressEditForm;

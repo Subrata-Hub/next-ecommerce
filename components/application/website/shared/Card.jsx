@@ -52,15 +52,17 @@
 
 "use client";
 import { PRODUCT_DETAILS } from "@/routes/WebsiteRoutes";
+
 import Image from "next/image";
-import Link from "next/link";
+
 import React, { useState } from "react";
-import { MdFavoriteBorder } from "react-icons/md";
-import slugify from "slugify";
+
 import ProductDetailModal from "../ProductDetailModal";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { addVariant } from "@/store/slices/cartSlice";
+
+import AddOrRemoveFavourites from "./AddOrRemoveFavourites";
 
 const shimmer = (w, h) => `
 <svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -84,6 +86,7 @@ const toBase64 = (str) =>
 const Card = ({ product }) => {
   const navigate = useRouter();
   const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
 
   console.log(product);
@@ -208,8 +211,19 @@ const Card = ({ product }) => {
         </div>
 
         {/* Favorite Icon */}
-        <div className="absolute top-4 right-4 md:top-5 md:right-5 w-8 h-8 rounded-full bg-white/90 shadow-sm z-10 flex justify-center items-center cursor-pointer hover:text-red-500">
-          <MdFavoriteBorder />
+        {/* <div
+          className="absolute top-4 right-4 md:top-5 md:right-5 w-8 h-8 rounded-full bg-white/90 shadow-sm z-10 flex justify-center items-center cursor-pointer hover:text-red-500"
+          onClick={handleFavourite}
+        >
+          {isFavourite ? (
+            <MdFavorite className="text-red-500" />
+          ) : (
+            <MdFavoriteBorder />
+          )}
+        
+        </div> */}
+        <div className="absolute top-4 right-4 md:top-5 md:right-5">
+          <AddOrRemoveFavourites product={product} className="" />
         </div>
       </div>
     </div>

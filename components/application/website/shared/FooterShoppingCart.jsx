@@ -5,7 +5,7 @@ import React from "react";
 import { RiShoppingBag4Line } from "react-icons/ri";
 import { useSelector } from "react-redux";
 
-const FooterShoppingCart = () => {
+const FooterShoppingCart = ({ cart }) => {
   const cartStore = useSelector((state) => state.cartStore);
   const count = cartStore.count;
   return (

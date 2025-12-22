@@ -41,13 +41,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    phone: {
-      type: String,
-      trim: true,
+    phoneNumber: {
+      type: Number,
+      default: null,
     },
     address: {
       type: String,
       trim: true,
+    },
+    date_of_brith: {
+      type: Date,
+
+      required: false,
+    },
+    date_of_anniversary: {
+      type: Date,
+      required: false,
     },
     deletedAt: {
       type: Date,

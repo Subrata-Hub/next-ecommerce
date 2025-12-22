@@ -46,6 +46,7 @@ export const POST = async (requext) => {
     }
 
     cart.userId = auth.userId;
+    cart.addressId = getAddress._id;
 
     const delivery_fee_per_km = 10;
     const distance_km = Number((distance / 1000).toFixed(2));

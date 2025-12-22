@@ -10,6 +10,7 @@ import { RxDragHandleHorizontal } from "react-icons/rx";
 import MobileCategories from "./MobileCategories";
 import axios from "axios";
 import { cookies } from "next/headers";
+import Favourite from "./Favourite";
 
 const Header = async () => {
   let user = null;
@@ -47,7 +48,7 @@ const Header = async () => {
     // if (!user) return;
   }
 
-  // console.log(user);
+  // console.log(user?.[0]?.favourites);
 
   const auth = {
     _id: user?._id,
@@ -62,7 +63,7 @@ const Header = async () => {
       <div className="hidden md:flex justify-between items-center gap-8 ">
         <ShoppingCard cart={user !== null && user?.[0]?.cart} />
 
-        <MdFavoriteBorder className="text-2xl" />
+        <Favourite favourites={user?.[0]?.favourites?.[0]} />
 
         <Profile auth={auth} />
       </div>

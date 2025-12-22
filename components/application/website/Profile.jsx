@@ -4,6 +4,7 @@ import { FaRegUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "../auth/Login";
 import { login, setLoginPopup } from "@/store/slices/authSlice";
+import Link from "next/link";
 
 const Profile = ({ auth }) => {
   const dispatch = useDispatch();
@@ -15,9 +16,11 @@ const Profile = ({ auth }) => {
   //   dispatch(login(auth));
   // }, [auth]);
   return (
-    <div>
+    <div className="mb-1">
       {authFromStore ? (
-        <FaRegUser className="text-2xl" />
+        <Link href="/my-account?tab=profile">
+          <FaRegUser className="text-[23px]" />
+        </Link>
       ) : (
         <button
           className="px-4 py-2 border rounded-2xl"

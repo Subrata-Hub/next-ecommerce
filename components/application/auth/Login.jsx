@@ -17,7 +17,7 @@ import {
   setPostLoginRedirect,
 } from "@/store/slices/authSlice";
 import { ADMIN_DASBOARD } from "@/routes/AddminPanelRoutes";
-import { USER_DASBOARD } from "@/routes/WebsiteRoutes";
+import { USER_DASBOARD, WEBSITE_HOME } from "@/routes/WebsiteRoutes";
 import OTPVerification from "@/components/application/OTPVerification";
 
 // Import the sub-components created above
@@ -50,6 +50,8 @@ const Login = () => {
 
       showToast("success", data.message);
       dispatch(login(data.data));
+      const id = crypto.randomUUID();
+      localStorage.setItem("publicUserId", id);
 
       // if (!loginPopup) {
       //   dispatch(setShowAddressForm(true));
@@ -57,8 +59,12 @@ const Login = () => {
 
       // updating guest carts
 
-      if (cartId && data.success) {
-        const { data } = await axios.post("/api/cart/update-user", { cartId });
+      if (cartId && data.success && data.data.role !== "admin") {
+        const { response } = await axios.post("/api/cart/update-user", {
+          cartId,
+        });
+
+        // console.log(response);
       }
 
       // Redirect logic
@@ -70,7 +76,7 @@ const Login = () => {
         // Priority 2: Check URL Callback (e.g. ?callback=/profile)
         router.push(searchParams.get("callback"));
       } else {
-        router.push(data.data.role === "admin" ? ADMIN_DASBOARD : "");
+        router.push(data.data.role === "admin" ? ADMIN_DASBOARD : WEBSITE_HOME);
       }
       // if (searchParams.has("callback")) {
       //   //   // Priority 2: Check URL Callback (e.g. ?callback=/profile)

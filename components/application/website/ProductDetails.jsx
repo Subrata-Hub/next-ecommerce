@@ -20,7 +20,6 @@ import { WEBSITE_CART, WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
 import imgPlaceHolder from "@/public/assets/images/img-placeholder.webp";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { MdFavoriteBorder } from "react-icons/md";
 
 import axios from "axios";
 
@@ -34,6 +33,7 @@ import { useRouter } from "next/navigation";
 
 import DOMPurify from "dompurify";
 import Loadings from "../Loadings";
+import AddOrRemoveFavourites from "./shared/AddOrRemoveFavourites";
 
 // Helper to get/set Cart ID from LocalStorage
 const getLocalCartId = () => {
@@ -334,9 +334,8 @@ const ProductDetails = ({ product, isQuickView = false, setOpen }) => {
           <div className="lg:w-1/2 md:mt-0 mt-5 ">
             <div className="flex  justify-between  items-center lg:justify-normal gap-4">
               <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
-              <div>
-                <MdFavoriteBorder className="text-3xl" />
-              </div>
+
+              <AddOrRemoveFavourites product={product} className="text-3xl" />
             </div>
 
             {!prodactVariantLoading ? (
