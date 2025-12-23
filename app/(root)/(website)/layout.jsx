@@ -19,7 +19,7 @@ const kumbh = Kumbh_Sans({
 
 const layout = ({ children }) => {
   return (
-    <div className={`${kumbh.className} min-h-screen flex flex-col`}>
+    <div className={`min-h-screen flex flex-col`}>
       <Header />
       <Categories />
       <main className="flex-1 pt-[70px] md:pt-0 pb-[70px] md:pb-0">

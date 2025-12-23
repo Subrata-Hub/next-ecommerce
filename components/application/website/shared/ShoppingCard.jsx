@@ -106,14 +106,14 @@ const ShoppingCard = ({ cart }) => {
   };
 
   useEffect(() => {
-    if (cart && cart.length > 0) {
+    if (cart) {
       dispatch(
         updateInitialState({
-          products: cart?.[0]?.cartItems,
-          count: cart?.[0]?.totalItem,
+          products: cart?.cartItems,
+          count: cart?.totalItem,
         })
       );
-      localStorage.setItem("cartId", cart?.[0]._id);
+      localStorage.setItem("cartId", cart?._id);
     }
   }, [cart]);
 

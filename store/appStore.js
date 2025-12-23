@@ -38,6 +38,8 @@ const persistConfig = {
   whitelist: ["authStore", "cartStore", "favouriteStore"],
 };
 
+// "authStore", "cartStore", "favouriteStore"
+
 // Combine your reducer
 const rootReducer = combineReducers({
   authStore: authReducer,

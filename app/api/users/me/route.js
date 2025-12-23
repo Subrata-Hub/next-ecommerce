@@ -56,6 +56,8 @@ export const GET = async (request) => {
         $project: {
           name: 1,
           email: 1,
+          role: 1,
+          avater: 1,
           phoneNumber: 1,
           date_of_brith: 1,
           date_of_anniversary: 1,

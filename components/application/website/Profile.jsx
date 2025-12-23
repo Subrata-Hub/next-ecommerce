@@ -6,18 +6,25 @@ import Login from "../auth/Login";
 import { login, setLoginPopup } from "@/store/slices/authSlice";
 import Link from "next/link";
 
-const Profile = ({ auth }) => {
+const Profile = ({ user }) => {
   const dispatch = useDispatch();
   const authFromStore = useSelector((store) => store.authStore.auth);
-  // const loginPopup = useSelector((state) => state.authStore.loginPopup);
-  // const [loginPopup, setLoginPopup] = useState(false);
 
-  // useEffect(() => {
-  //   dispatch(login(auth));
-  // }, [auth]);
+  const loggedinuserData = {
+    _id: user?._id,
+    role: user?.role,
+    name: user?.name,
+    avater: user?.avater,
+  };
+
+  useEffect(() => {
+    if (user) {
+      dispatch(login(loggedinuserData));
+    }
+  }, []);
   return (
     <div className="mb-1">
-      {authFromStore ? (
+      {authFromStore?.name ? (
         <Link href="/my-account?tab=profile">
           <FaRegUser className="text-[23px]" />
         </Link>

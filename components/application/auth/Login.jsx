@@ -23,7 +23,10 @@ import OTPVerification from "@/components/application/OTPVerification";
 // Import the sub-components created above
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
-import { setShowAddressForm } from "@/store/slices/settingSlice";
+import {
+  setRefetchUser,
+  setShowAddressForm,
+} from "@/store/slices/settingSlice";
 import { getLocalCartId } from "@/lib/helperFunction";
 
 const Login = () => {
@@ -88,6 +91,7 @@ const Login = () => {
       // dispatch(setShowAddressForm(true));
 
       // Close modal and clean up
+      dispatch(setRefetchUser(true));
 
       dispatch(setLoginPopup(false));
       setOtpEmail("");

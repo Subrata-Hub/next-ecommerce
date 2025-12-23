@@ -49,8 +49,6 @@ const MyAccount = async ({ searchParams }) => {
     // if (!user) return;
   }
 
-  console.log(user);
-
   const addresses = user?.[0]?.address;
   const favouriteProducts = user?.[0]?.favourites;
 

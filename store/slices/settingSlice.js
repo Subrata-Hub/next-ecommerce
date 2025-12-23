@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   showAddressForm: false,
+  refetchUser: false,
 };
 
 export const settingSlice = createSlice({
@@ -11,8 +12,12 @@ export const settingSlice = createSlice({
     setShowAddressForm: (state, action) => {
       state.showAddressForm = action.payload;
     },
+
+    setRefetchUser: (state, action) => {
+      state.refetchUser = action.payload;
+    },
   },
 });
 
-export const { setShowAddressForm } = settingSlice.actions;
+export const { setShowAddressForm, setRefetchUser } = settingSlice.actions;
 export default settingSlice.reducer;

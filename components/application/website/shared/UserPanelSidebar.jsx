@@ -36,7 +36,7 @@ const UserPanelSidebar = ({ tab, userInfo }) => {
       if (!logoutResponse.success) {
         throw new Error(logoutResponse.message);
       }
-      dispatch(logout());
+
       appStore.dispatch(clearCart());
       dispatch(
         updateInitialState({
@@ -46,6 +46,7 @@ const UserPanelSidebar = ({ tab, userInfo }) => {
       );
       localStorage.removeItem("cartId");
       localStorage.removeItem("publicUserId");
+      dispatch(logout());
       navigate.push("/");
       setOpen(false);
     } catch (error) {
