@@ -5,17 +5,11 @@ import { Kumbh_Sans, Readex_Pro } from "next/font/google";
 import Categories from "@/components/application/website/shared/Categories";
 import FooterNavbar from "@/components/application/website/shared/FooterNavbar";
 
-// const readex_pro = Readex_Pro({
+// const kumbh = Kumbh_Sans({
 //   subsets: ["latin"], // Or ['latin', 'arabic'] if needed
-//   weight: ["400", "500", "600", "700"],
+//   weight: ["400", "500", "600", "700", "800"],
 //   display: "swap",
 // });
-
-const kumbh = Kumbh_Sans({
-  subsets: ["latin"], // Or ['latin', 'arabic'] if needed
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 const layout = ({ children }) => {
   return (
