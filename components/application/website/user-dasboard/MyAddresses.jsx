@@ -104,7 +104,10 @@ const MyAddresses = ({ addresses }) => {
       </div>
 
       <Dialog open={open} onOpenChange={() => setOpen(false)}>
-        <DialogContent className="w-full lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] h-[calc(100%-100px)] px-6 border-0 shadow-none overflow-y-scroll">
+        <DialogContent
+          className="w-full lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] h-[calc(100%-100px)] px-6 border-0 shadow-none overflow-y-scroll"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <div className="">
             <DialogHeader className="h-8 border-b">
               <DialogTitle>Edit Address</DialogTitle>
@@ -112,6 +115,7 @@ const MyAddresses = ({ addresses }) => {
             </DialogHeader>
             <div className="h-[calc(100%-10px)] py-2">
               <AddressEditForm
+                key={selectedAddress?._id}
                 selectedAddress={selectedAddress}
                 onUpdateSuccess={handleUpdateSuccess}
               />

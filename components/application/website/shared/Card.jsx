@@ -89,8 +89,6 @@ const Card = ({ product }) => {
 
   const [open, setOpen] = useState(false);
 
-  console.log(product);
-
   const selectedProductAndVariant = {
     productId: product._id,
     variantId: product?.variants?.[0]?._id,

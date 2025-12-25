@@ -1,6 +1,6 @@
 "use client";
 import useFetch from "@/hooks/useFetch";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import Filter from "./Filter";
 import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";

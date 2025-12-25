@@ -133,7 +133,7 @@ const ShoppingCard = ({ cart }) => {
         </SheetHeader>
         <div className="w-full h-[1px] bg-gray-100 px-2"></div>
         {/* <SheetDescription></SheetDescription> */}
-        <div className="h-[calc(100vh-150px)] lg:h-[calc(100vh-40px)]">
+        <div className="hidden md:flex flex-col h-[calc(100vh-150px)] lg:h-[calc(100vh-40px)]">
           <div className="px-2 h-[calc(100%-160px)] overflow-auto pe-2 flex flex-col">
             {count === 0 && (
               <div className="h-full flex justify-center items-center text-xl font-semibold">

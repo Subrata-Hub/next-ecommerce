@@ -1,13 +1,27 @@
 "use client";
 import { WEBSITE_CART } from "@/routes/WebsiteRoutes";
+import { updateInitialState } from "@/store/slices/cartSlice";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { RiShoppingBag4Line } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const FooterShoppingCart = ({ cart }) => {
+  const dispatch = useDispatch();
   const cartStore = useSelector((state) => state.cartStore);
   const count = cartStore.count;
+
+  useEffect(() => {
+    if (cart) {
+      dispatch(
+        updateInitialState({
+          products: cart?.cartItems,
+          count: cart?.totalItem,
+        })
+      );
+      localStorage.setItem("cartId", cart?._id);
+    }
+  }, [cart]);
   return (
     <div>
       <Link href={WEBSITE_CART}>

@@ -115,6 +115,19 @@ const Categories = () => {
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
+    sessionStorage.removeItem("key");
+  };
+
+  const clearFilters = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("filterPrice");
+      sessionStorage.removeItem("filterWeights");
+      sessionStorage.removeItem("filterFlavours");
+      sessionStorage.removeItem("filterCreams");
+      sessionStorage.removeItem("filterDietarys");
+      // Close the menu after clicking
+      setOpenIndex(null);
+    }
   };
 
   return (
@@ -166,6 +179,7 @@ const Categories = () => {
                             <Link
                               href={WEBSITE_CATEGORY(item.slug)}
                               className="block h-full"
+                              onClick={clearFilters}
                             >
                               <div className="w-full flex justify-between h-full">
                                 <div className="flex flex-col justify-between pt-2 pl-2">

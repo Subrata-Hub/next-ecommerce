@@ -7,6 +7,7 @@ import Profile from "../Profile";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux"; // Added useDispatch
 import { setRefetchUser } from "@/store/slices/settingSlice";
+import FooterShoppingCart from "./FooterShoppingCart";
 
 const FooterUserMenu = () => {
   const authFromStore = useSelector((store) => store.authStore.auth);
@@ -61,7 +62,8 @@ const FooterUserMenu = () => {
         </>
       ) : (
         <>
-          <ShoppingCard cart={userData?.[0]?.cart?.[0]} />
+          {/* <ShoppingCard cart={userData?.[0]?.cart?.[0]} /> */}
+          <FooterShoppingCart cart={userData?.[0]?.cart?.[0]} />
 
           <Favourite favourites={userData?.[0]?.favourites?.[0]} />
 
