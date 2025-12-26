@@ -17,7 +17,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 
 const UserPanelSidebar = ({ tab, userInfo }) => {
@@ -78,7 +77,7 @@ const UserPanelSidebar = ({ tab, userInfo }) => {
             <button
               key={menu.title}
               className={`flex gap-2 items-center p-3 rounded-xl transition-all ${
-                isActive ? "bg-red-600 text-white" : "hover:bg-gray-200"
+                isActive ? "bg-violet-500 text-white" : "hover:bg-gray-200"
               }`}
               onClick={() => handleClik(menu.tab)}
             >
@@ -116,14 +115,18 @@ const UserPanelSidebar = ({ tab, userInfo }) => {
 
       {/* --- MOBILE VIEW --- */}
       {/* CSS: visible on mobile, hidden on large screens */}
-      <div className="lg:hidden">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <button className="text-3xl" onClick={() => setOpen(true)}>
-              <HiMiniBars3BottomRight />
-            </button>
-          </SheetTrigger>
+      <div className="flex lg:hidden items-center gap-10">
+        <div
+          className="w-12 h-12 flex justify-center items-center rounded-full border border-gray-400 "
+          onClick={() => setOpen(true)}
+        >
+          <HiMiniBars3BottomRight className="text-3xl" />
+        </div>
 
+        <h1 className="text-3xl font-bold capitalize">{tab}</h1>
+      </div>
+      <div className="lg:hidden">
+        <Sheet open={open} onOpenChange={() => setOpen()}>
           <SheetContent className="flex w-[85%] sm:w-[350px]" side="left">
             <SheetHeader>
               <SheetTitle className="hidden">Menu</SheetTitle>

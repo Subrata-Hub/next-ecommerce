@@ -7,6 +7,8 @@ import {
   removeFromFavourites,
 } from "@/store/slices/favouriteSlice";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +20,9 @@ const getLocalUserPublicId = () => {
   return null;
 };
 
-const AddOrRemoveFavourites = ({ product, className }) => {
+const AddOrRemoveFavourites = ({ product, isWishlist, className }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const publicUserId = getLocalUserPublicId();
 
@@ -75,6 +78,10 @@ const AddOrRemoveFavourites = ({ product, className }) => {
 
           if (response.data.success) {
             showToast("success", "Remove from favourites");
+
+            if (isWishlist) {
+              router.refresh();
+            }
           }
         } catch (error) {
           console.log("Remove failed", error);

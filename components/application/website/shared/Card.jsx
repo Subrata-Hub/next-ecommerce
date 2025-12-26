@@ -83,7 +83,7 @@ const toBase64 = (str) =>
     ? Buffer.from(str).toString("base64")
     : window.btoa(str);
 
-const Card = ({ product }) => {
+const Card = ({ product, isWishlist = false }) => {
   const navigate = useRouter();
   const dispatch = useDispatch();
 
@@ -221,7 +221,11 @@ const Card = ({ product }) => {
         
         </div> */}
         <div className="absolute top-4 right-4 md:top-5 md:right-5">
-          <AddOrRemoveFavourites product={product} className="" />
+          <AddOrRemoveFavourites
+            product={product}
+            isWishlist={isWishlist}
+            className=""
+          />
         </div>
       </div>
     </div>

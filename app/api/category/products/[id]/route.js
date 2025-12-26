@@ -464,7 +464,7 @@ export const GET = async (request, { params }) => {
                       // Check if any filter dietary is present...
                       dietary
                         ? {
-                            $in: ["$$variant.dietry", dietary.split(",")],
+                            $in: ["$$variant.dietary", dietary.split(",")],
                           }
                         : { $literal: true },
                       {

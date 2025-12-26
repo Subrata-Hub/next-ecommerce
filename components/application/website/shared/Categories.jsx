@@ -115,25 +115,12 @@ const Categories = () => {
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
-    sessionStorage.removeItem("key");
-  };
-
-  const clearFilters = () => {
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem("filterPrice");
-      sessionStorage.removeItem("filterWeights");
-      sessionStorage.removeItem("filterFlavours");
-      sessionStorage.removeItem("filterCreams");
-      sessionStorage.removeItem("filterDietarys");
-      // Close the menu after clicking
-      setOpenIndex(null);
-    }
   };
 
   return (
     <>
       {windowSize.width > 768 && (
-        <nav className="hidden md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 py-4 ml-8  relative ">
+        <nav className="hidden md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 py-4 ml-8  relative border-b border-gray-200 ">
           {/* 2. Added 'relative' here so the dropdown positions against the full width of the UL, not the individual LI */}
           <ul className="flex justify-between items-center gap-4 lg:gap-6 w-full relative">
             {categorieMenu?.map((categorie, index) => (
@@ -146,7 +133,7 @@ const Categories = () => {
                       openIndex === index ? "text-blue-600" : "text-gray-800"
                     }`}
                   >
-                    <p className="text-[12px] lg:text-[14px] xl:text-[15px] whitespace-nowrap font-medium">
+                    <p className="text-[12px] lg:text-[15px] xl:text-[16px] whitespace-nowrap font-medium">
                       {categorie.name}
                     </p>
                     {categorie?.subCategory && (
@@ -179,7 +166,7 @@ const Categories = () => {
                             <Link
                               href={WEBSITE_CATEGORY(item.slug)}
                               className="block h-full"
-                              onClick={clearFilters}
+                              onClick={() => setOpenIndex(null)}
                             >
                               <div className="w-full flex justify-between h-full">
                                 <div className="flex flex-col justify-between pt-2 pl-2">

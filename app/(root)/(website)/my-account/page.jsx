@@ -72,7 +72,7 @@ const MyAccount = async ({ searchParams }) => {
 
           {tab === "orders" && <MyOrders />}
 
-          {tab === "wishlist" && (
+          {tab === "favourites" && (
             <Wishlist favouriteProducts={favouriteProducts} />
           )}
 

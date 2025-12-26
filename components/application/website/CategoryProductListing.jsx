@@ -1,6 +1,6 @@
 "use client";
 import useFetch from "@/hooks/useFetch";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Filter from "./Filter";
 import Link from "next/link";
 import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
@@ -21,6 +21,8 @@ import Card from "./shared/Card";
 import ButtonLoading from "../ButtonLoading";
 import Loadings from "../Loadings";
 import { useSelector } from "react-redux";
+
+import { RxCross2 } from "react-icons/rx";
 
 // Helper function to get items from sessionStorage
 const getInitialState = (key, defaultValue) => {
@@ -194,8 +196,56 @@ const CategoryProductListing = ({ categoryData }) => {
     // with no variants, though my logic ensures at least one.
     // .filter((product) => product.variants.length > 0)
   );
-  console.log(newProducts);
 
+  const activeFilters = [
+    {
+      items: selectedWeights,
+      type: "selectedWeights",
+      style: "text-violet-600 border-2 border-violet-300",
+    },
+    {
+      items: selectedFlavours,
+      type: "selectedFlavours",
+      style: "text-violet-600 border-2 border-violet-300",
+    },
+    {
+      items: selectedCreams,
+      type: "selectedCreams",
+      style: "text-violet-600 border-2 border-violet-300",
+    },
+    {
+      items: selectedDietarys,
+      type: "selectedDietarys",
+      style: "text-violet-600 border-2 border-violet-300",
+    },
+  ];
+
+  const removeFilter = (filterType, value) => {
+    // Map the string keys to their specific state setter functions
+    const filterSetters = {
+      selectedWeights: setSelectedWeights,
+      selectedFlavours: setSelectedFlavours,
+      selectedCreams: setSelectedCreams,
+      selectedDietarys: setSelectedDietarys,
+    };
+
+    const setFilterState = filterSetters[filterType];
+
+    // If a matching setter is found, filter the previous state
+    if (setFilterState) {
+      setFilterState((prev) => prev.filter((item) => item !== value));
+    }
+  };
+
+  const handleClear = () => {
+    setPriceFilter({ minPrice: 0, maxPrice: 3000 });
+    setSelectedWeights([]);
+    setSelectedFlavours([]);
+    setSelectedCreams([]);
+    setSelectedDietarys([]);
+    setSorting("default_sorting");
+    sessionStorage.clear();
+  };
   return (
     <div className="md:flex px-4 md:px-4 lg:px-6 xl:px-15 2xl:px-40 pt-10 md:pt-15">
       {windowSize.width > 1024 ? (
@@ -212,6 +262,7 @@ const CategoryProductListing = ({ categoryData }) => {
               setSelectedCreams={setSelectedCreams}
               selectedDietarys={selectedDietarys}
               setSelectedDietarys={setSelectedDietarys}
+              handleClear={handleClear}
             />
           </div>
         </div>
@@ -234,6 +285,7 @@ const CategoryProductListing = ({ categoryData }) => {
                 setSelectedCreams={setSelectedCreams}
                 selectedDietarys={selectedDietarys}
                 setSelectedDietarys={setSelectedDietarys}
+                handleClear={handleClear}
               />
             </div>
           </SheetContent>
@@ -250,6 +302,25 @@ const CategoryProductListing = ({ categoryData }) => {
           productLength={productLength}
         />
 
+        <div className="flex gap-4 pt-4 flex-wrap">
+          {activeFilters.map((group) =>
+            group.items.map((item) => (
+              <div
+                key={`${group.type}-${item}`}
+                className={`w-28 h-8 flex justify-between items-center px-2 rounded-xl ${group.style}`}
+              >
+                <p className="truncate text-sm">{item}</p>
+                <span
+                  className="cursor-pointer"
+                  onClick={() => removeFilter(group.type, item)}
+                >
+                  <RxCross2 />
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+
         {isFetching && (
           <div className="p-3 font-semibold text-center">
             <Loadings className="flex justify-center items-center" />
@@ -258,6 +329,7 @@ const CategoryProductListing = ({ categoryData }) => {
         {error && (
           <div className="p-3 font-semibold text-center">{error.message}.</div>
         )}
+
         <div className="grid lg:grid-cols-3 grid-cols-2 lg:gap-6 gap-5 mt-6">
           {/* {data &&
             data?.pages?.map((page) =>

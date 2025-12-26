@@ -14,7 +14,7 @@ const CategoryBanner = ({ categoryData }) => {
         height={300}
         className="w-full h-full object-center object-cover"
       />
-      <div className="absolute top-[30%] left-[30%] lg:top-16 lg:left-40 z-10">
+      <div className="absolute top-[30%] left-[30%] lg:top-16 lg:left-40 2xl:left-48 z-10">
         <h1 className="text-3xl md:text-4xl font-bold whitespace-nowrap">
           {categoryData?.name}
         </h1>

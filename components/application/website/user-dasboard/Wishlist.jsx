@@ -10,7 +10,7 @@ const Wishlist = ({ favouriteProducts }) => {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
         {favouriteProducts?.[0]?.products?.map((product) => (
           <div key={product._id}>
-            <Card product={product} />
+            <Card product={product} isWishlist={true} />
           </div>
         ))}
       </div>

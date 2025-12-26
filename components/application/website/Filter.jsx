@@ -1,6 +1,4 @@
 "use client";
-import useFetch from "@/hooks/useFetch";
-import React, { useEffect, useState } from "react"; // Removed unused imports
 
 import {
   Accordion,
@@ -12,20 +10,6 @@ import {
 import { creams, dietarys, flavours, weightsData } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import ButtonLoading from "../ButtonLoading";
-// Removed useSearchParams, useRouter, and usePathname
-import { WEBSITE_CATEGORY } from "@/routes/WebsiteRoutes";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
-// Helper function to get items from sessionStorage
-// const getInitialState = (key, defaultValue) => {
-//   if (typeof window === "undefined") {
-//     return defaultValue; // Return default if on server
-//   }
-//   const saved = sessionStorage.getItem(key);
-//   return saved ? JSON.parse(saved) : defaultValue;
-// };
 
 const Filter = ({
   priceFilter,
@@ -38,27 +22,8 @@ const Filter = ({
   setSelectedCreams,
   selectedDietarys,
   setSelectedDietarys,
+  handleClear,
 }) => {
-  // const searchParams = useSearchParams();
-
-  // const [priceFilter, setPriceFilter] = useState(() =>
-  //   getInitialState("filterPrice", { minPrice: 0, maxPrice: 3000 })
-  // );
-  // const [selectedWeights, setSelectedWeights] = useState(() =>
-  //   getInitialState("filterWeights", [])
-  // );
-  // const [selectedFlavours, setSelectedFlavours] = useState(() =>
-  //   getInitialState("filterFlavours", [])
-  // );
-  // const [selectedCreams, setSelectedCreams] = useState(() =>
-  //   getInitialState("filterCreams", [])
-  // );
-  // const [selectedDietarys, setSelectedDietarys] = useState(() =>
-  //   getInitialState("filterDietarys", [])
-  // );
-
-  // const urlSearchParams = new URLSearchParams(searchParams.toString());
-
   // Price slider change handler (does not save, only updates local state)
   const handlePriceChanged = (value) => {
     setPriceFilter({ minPrice: value[0], maxPrice: value[1] });
@@ -78,10 +43,7 @@ const Filter = ({
     }
 
     setSelectedWeights(newSelectedWeight);
-    // newSelectedWeight.length > 0
-    //   ? urlSearchParams.set("weight", newSelectedWeight.join(","))
-    //   : urlSearchParams.delete("weight");
-    // Save to sessionStorage
+
     sessionStorage.setItem("filterWeights", JSON.stringify(newSelectedWeight));
   };
 
@@ -96,10 +58,7 @@ const Filter = ({
     }
 
     setSelectedFlavours(newSelectedFlavours);
-    // newSelectedFlavours.length > 0
-    //   ? urlSearchParams.set("flavour", newSelectedFlavours.join(","))
-    //   : urlSearchParams.delete("flavour");
-    // Save to sessionStorage
+
     sessionStorage.setItem(
       "filterFlavours",
       JSON.stringify(newSelectedFlavours)
@@ -115,10 +74,7 @@ const Filter = ({
     }
 
     setSelectedCreams(newSelectedCreams);
-    // newSelectedCreams.length > 0
-    //   ? urlSearchParams.set("cream", newSelectedCreams.join(","))
-    //   : urlSearchParams.delete("cream");
-    // Save to sessionStorage
+
     sessionStorage.setItem("filterCreams", JSON.stringify(newSelectedCreams));
   };
 
@@ -133,10 +89,7 @@ const Filter = ({
     }
 
     setSelectedDietarys(newSelectedDietarys);
-    // newSelectedDietarys.length > 0
-    //   ? urlSearchParams.set("dietary", newSelectedDietarys.join(","))
-    //   : urlSearchParams.delete("dietary");
-    // Save to sessionStorage
+
     sessionStorage.setItem(
       "filterDietarys",
       JSON.stringify(newSelectedDietarys)
@@ -145,23 +98,8 @@ const Filter = ({
 
   // Price filter button handler (saves the staged price)
   const handlePriceFilter = () => {
-    // urlSearchParams.set("minPrice", priceFilter.minPrice);
-    // urlSearchParams.set("maxPrice", priceFilter.maxPrice);
-    // Save to sessionStorage
     sessionStorage.setItem("filterPrice", JSON.stringify(priceFilter));
   };
-
-  const handleClear = () => {
-    setPriceFilter({ minPrice: 0, maxPrice: 3000 });
-    setSelectedWeights([]);
-    setSelectedFlavours([]);
-    setSelectedCreams([]);
-    setSelectedDietarys([]);
-    sessionStorage.clear();
-  };
-
-  // The commented-out useEffect is no longer needed
-  // as state is initialized directly in useState
 
   return (
     <div className="">
@@ -178,7 +116,7 @@ const Filter = ({
           // defaultValue={["1", "2", "3", "4", "5"]}
           // collapsible
 
-          defaultValue="5"
+          defaultValue={["1", "5"]}
           collapsible={["1", "2", "3", "4"]}
         >
           {/* Price Accordion */}
@@ -209,14 +147,6 @@ const Filter = ({
                   })}
                 </span>
               </div>
-              {/* <div className="mt-4">
-                <ButtonLoading
-                  type="button"
-                  onclick={handlePriceFilter}
-                  text="Filter price"
-                  className="rounded-full"
-                />
-              </div> */}
             </AccordionContent>
           </AccordionItem>
           {/* Weights Accordion */}

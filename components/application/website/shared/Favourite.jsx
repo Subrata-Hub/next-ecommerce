@@ -25,7 +25,7 @@ const Favourite = ({ favourites }) => {
     }
   }, [favourites]);
   return (
-    <Link href="/my-account?tab=wishlist">
+    <Link href="/my-account?tab=favourites">
       <div className="relative ">
         <MdFavoriteBorder className="text-2xl" />
 

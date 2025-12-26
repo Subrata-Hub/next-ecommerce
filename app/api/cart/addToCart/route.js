@@ -156,8 +156,6 @@ export const POST = async (request) => {
     // 7. Save and Return Response
     const newCartData = await cart.save();
 
-    console.log(newCartData);
-
     // IMPORTANT: Return an object with cartId so frontend can find it
     return response(true, 200, "Cart updated successfully", {
       cartId: newCartData._id,
