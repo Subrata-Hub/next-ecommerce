@@ -31,6 +31,7 @@ export const LoginForm = ({
   onSwitchToRegister,
   onLoginSuccess,
   onLoginFail,
+  onSwitchToResetPassword,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -109,13 +110,21 @@ export const LoginForm = ({
               </span>
             </div>
             <div className="mt-3">
-              <Link
+              {/* <Link
+              onSwitchToResetPassword={() => setView("RESET-PASSWORD")}
                 href={WEBSITE_RESETPASSWORD}
                 className="text-primary underline"
                 onClick={() => dispatch(setLoginPopup(false))}
+
               >
                 Forgot password?
-              </Link>
+              </Link> */}
+              <span
+                onClick={onSwitchToResetPassword}
+                className="text-primary underline cursor-pointer"
+              >
+                Forgot password?
+              </span>
             </div>
           </div>
         </form>

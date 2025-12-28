@@ -42,7 +42,7 @@ export const RegisterForm = ({ onSwitchToLogin, onRegisterFail }) => {
       form.reset();
       showToast("success", data.message);
       // Optional: Auto switch to login after register
-      // onSwitchToLogin();
+      onSwitchToLogin();
     } catch (error) {
       // showToast("error", error.message);
       const errorMessage =

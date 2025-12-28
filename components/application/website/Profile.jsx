@@ -9,6 +9,7 @@ import Link from "next/link";
 const Profile = ({ user }) => {
   const dispatch = useDispatch();
   const authFromStore = useSelector((store) => store.authStore.auth);
+  const loginPopup = useSelector((state) => state.authStore.loginPopup);
 
   const loggedinuserData = {
     _id: user?._id,
@@ -32,14 +33,11 @@ const Profile = ({ user }) => {
         <button
           className="px-4 py-2 border rounded-2xl"
           // onClick={() => setLoginPopup(true)}
-          onClick={() => dispatch(setLoginPopup(true))}
+          onClick={() => dispatch(setLoginPopup(open))}
         >
           Login
         </button>
       )}
-      {/* {loginPopup && (
-        <Login loginPopup={loginPopup} setLoginPopup={setLoginPopup} />
-      )} */}
     </div>
   );
 };

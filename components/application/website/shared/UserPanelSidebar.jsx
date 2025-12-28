@@ -46,6 +46,7 @@ const UserPanelSidebar = ({ tab, userInfo }) => {
       localStorage.removeItem("cartId");
       localStorage.removeItem("publicUserId");
       dispatch(logout());
+
       navigate.push("/");
       setOpen(false);
     } catch (error) {

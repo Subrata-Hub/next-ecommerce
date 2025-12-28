@@ -1,6 +1,6 @@
 "use client";
 import { appStore, persistor } from "@/store/appStore";
-import { logout } from "@/store/slices/authSlice";
+import { logout, setLoginPopup } from "@/store/slices/authSlice";
 import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -28,12 +28,16 @@ import {
   setShowAddressForm,
 } from "@/store/slices/settingSlice";
 import { getLocalCartId } from "@/lib/helperFunction";
+import ResetPasswordForm from "./ResetPasswordForm";
+import UpdatePasswordForm from "./UpdatePasswordForm";
 
 const Login = () => {
   // State: 'LOGIN' | 'REGISTER' | 'OTP'
   const [view, setView] = useState("LOGIN");
   const [otpEmail, setOtpEmail] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
+  const [isPasswordResetVarification, setIsPasswordResetVarification] =
+    useState(false);
   const loginPopup = useSelector((state) => state.authStore.loginPopup);
   const postLoginRedirect = useSelector(
     (state) => state.authStore.postLoginRedirect
@@ -97,7 +101,40 @@ const Login = () => {
       setOtpEmail("");
       setView("LOGIN");
     } catch (error) {
-      showToast("error", error.message);
+      // showToast("error", error.message);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      handleErrorMessage(errorMessage);
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleOtpVerificationForResetPassword = async (values) => {
+    try {
+      setOtpLoading(true);
+      const { data: otpResponse } = await axios.post(
+        "/api/auth/reset-password/verify-otp",
+        values
+      );
+      if (!otpResponse.success) {
+        throw new Error(otpResponse.message);
+      }
+
+      showToast("success", otpResponse.message);
+      // setIsOtpVerified(true);
+      setIsPasswordResetVarification(false);
+
+      setView("UPDATE-PASSWORD");
+    } catch (error) {
+      // showToast("error", error.message);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      handleErrorMessage(errorMessage);
     } finally {
       setOtpLoading(false);
     }
@@ -105,6 +142,12 @@ const Login = () => {
 
   const handleLoginSuccess = (email) => {
     setOtpEmail(email);
+    setView("OTP");
+  };
+
+  const handleEmailVerificationSuccess = () => {
+    // setOtpEmail(email);
+    setIsPasswordResetVarification(true);
     setView("OTP");
   };
 
@@ -140,11 +183,52 @@ const Login = () => {
             </DialogDescription>
             <OTPVerification
               email={otpEmail}
-              onSubmit={handleOtpVerification}
+              onSubmit={
+                !isPasswordResetVarification
+                  ? handleOtpVerification
+                  : handleOtpVerificationForResetPassword
+              }
               loading={otpLoading}
+              // onOtpVerificationFail={handleErrorMessage}
             />
           </>
         );
+      case "RESET-PASSWORD":
+        return (
+          <>
+            <DialogTitle className="text-center text-2xl font-semibold">
+              Reset Password
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Enter your email for password reset
+            </DialogDescription>
+            <ResetPasswordForm
+              onSwitchToLogin={() => setView("LOGIN")}
+              handleEmailVerificationSuccess={handleEmailVerificationSuccess}
+              setOtpEmail={setOtpEmail}
+              onResetPasswordFail={handleErrorMessage}
+            />
+          </>
+        );
+
+      case "UPDATE-PASSWORD":
+        return (
+          <>
+            <DialogTitle className="text-center text-2xl font-semibold">
+              Reset Password
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              Enter your email for password reset
+            </DialogDescription>
+
+            <UpdatePasswordForm
+              email={otpEmail}
+              onPasswordUpdateSuccess={() => setView("LOGIN")}
+              onUpdatePasswordFail={handleErrorMessage}
+            />
+          </>
+        );
+
       case "LOGIN":
       default:
         return (
@@ -159,6 +243,7 @@ const Login = () => {
               onSwitchToRegister={() => setView("REGISTER")}
               onLoginSuccess={handleLoginSuccess}
               onLoginFail={handleErrorMessage}
+              onSwitchToResetPassword={() => setView("RESET-PASSWORD")}
             />
           </>
         );

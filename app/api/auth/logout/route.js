@@ -7,6 +7,7 @@ export const POST = async (request) => {
     await connectDB();
     const cookieStore = await cookies();
     cookieStore.delete("access_token");
+
     return response(true, 200, "logout successfull");
   } catch (error) {
     catchError();

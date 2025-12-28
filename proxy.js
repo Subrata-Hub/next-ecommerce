@@ -26,7 +26,7 @@ export const proxy = async (request) => {
       new TextEncoder().encode(process.env.SECRET_KEY)
     );
 
-    const role = payload.role;
+    const role = payload.role || session.user.role;
 
     // 3. AUTH ROUTE HANDLING (Logged in users shouldn't see Login/Register)
     if (pathname.startsWith("/auth")) {
@@ -69,5 +69,5 @@ export const proxy = async (request) => {
 };
 
 export const config = {
-  matcher: ["/admin/:path*", "/my-account/:path*", "/auth/:path*"]
+  matcher: ["/admin/:path*", "/my-account/:path*", "/auth/:path*"],
 };

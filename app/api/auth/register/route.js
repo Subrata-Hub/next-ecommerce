@@ -43,26 +43,28 @@ export const POST = async (req) => {
     });
     await newRegistation.save();
 
-    const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-    const token = await new SignJWT({ userId: newRegistation._id.toString() })
-      .setIssuedAt()
-      .setExpirationTime("1h")
-      .setProtectedHeader({ alg: "HS256" })
-      .sign(secret);
+    // const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+    // const token = await new SignJWT({ userId: newRegistation._id.toString() })
+    //   .setIssuedAt()
+    //   .setExpirationTime("1h")
+    //   .setProtectedHeader({ alg: "HS256" })
+    //   .sign(secret);
 
-    await sendMail(
-      "Email verification Link from Next-Ecommerce",
-      email,
-      emailVerificationLink(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
-      )
-    );
+    // await sendMail(
+    //   "Email verification Link from Next-Ecommerce",
+    //   email,
+    //   emailVerificationLink(
+    //     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
+    //   )
+    // );
 
-    return response(
-      true,
-      200,
-      "Resistation success,Please verify your email address"
-    );
+    // return response(
+    //   true,
+    //   200,
+    //   "Resistation success,Please verify your email address"
+    // );
+
+    return response(true, 200, "Resistation successfull,Please login");
   } catch (error) {
     catchError(error);
     console.log(error);

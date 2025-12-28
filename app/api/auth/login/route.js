@@ -44,28 +44,28 @@ export const POST = async (request) => {
     }
 
     // resend email verification link
-    if (!getUser.isEmailVerified) {
-      const secret = new TextEncoder().encode(process.env.SECRET_KEY);
-      const token = await new SignJWT({ userId: getUser._id.toString() })
-        .setIssuedAt()
-        .setExpirationTime("1h")
-        .setProtectedHeader({ alg: "HS256" })
-        .sign(secret);
+    // if (!getUser.isEmailVerified) {
+    //   const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+    //   const token = await new SignJWT({ userId: getUser._id.toString() })
+    //     .setIssuedAt()
+    //     .setExpirationTime("1h")
+    //     .setProtectedHeader({ alg: "HS256" })
+    //     .sign(secret);
 
-      await sendMail(
-        "Email verification Link from Next-Ecommerce",
-        email,
-        emailVerificationLink(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
-        )
-      );
+    //   await sendMail(
+    //     "Email verification Link from Next-Ecommerce",
+    //     email,
+    //     emailVerificationLink(
+    //       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`
+    //     )
+    //   );
 
-      return response(
-        false,
-        401,
-        "your email not verified. we have sens verification link to your registered email address "
-      );
-    }
+    //   return response(
+    //     false,
+    //     401,
+    //     "your email not verified. we have sens verification link to your registered email address "
+    //   );
+    // }
 
     // password verification
 

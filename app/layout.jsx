@@ -29,6 +29,7 @@ export default function RootLayout({ children }) {
 
           {process.env.NODE_ENV === "production" && <SpeedInsights />}
           {/* 3. Render the wrapper instead of direct Login */}
+
           <AuthWrapper />
         </GlobalProvider>
       </body>
